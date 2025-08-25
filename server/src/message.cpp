@@ -179,3 +179,7 @@ size_t Message::deserialize(std::string data) {
     }
     return pos;
 }
+
+void Message::appendMessageParam(const MessageParam& param) {
+   content.push_back(param);
+}
