@@ -1,27 +1,33 @@
-cmake_minimum_required(VERSION 3.10)
-project(SC6103-DS)
 
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_compile_definitions(DEBUG)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEBUG")
+cmake_minimum_required(VERSION 3.14)
 
-# 设置C++标准
-set(CMAKE_CXX_STANDARD 21)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+project(SC6103DS_Server)
+
+set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE STRING "Build architectures for Mac OS X" FORCE)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# 查找GTest
+find_package(GTest REQUIRED)
+include_directories(${GTEST_INCLUDE_DIRS})
 
 # 包含头文件目录
-include_directories(
-    ${PROJECT_SOURCE_DIR}/include
-)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 
 # 源文件
-set(SOURCES
-    src/message.cpp
-    main.cpp
+set(SERVER_SOURCES
+	src/message.cpp
 )
 
-# 可执行文件输出到 bin 目录
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
+# 生成静态库
+add_library(message STATIC ${SERVER_SOURCES})
 
-# 添加可执行文件
-add_executable(SC6103-DS ${SOURCES})
+# 主程序（如有）
+add_executable(server main.cpp)
+target_link_libraries(server message)
+
+# 测试
+add_executable(message_test test_module/message_test.cpp)
+target_link_libraries(message_test message GTest::GTest GTest::Main pthread)

@@ -2,8 +2,8 @@
 #define MESSAGE_HPP
 
 #include <string>
-#include <vector> 
-#include "include/serializable.hpp"
+#include <vector>
+#include "serializable.hpp"
 
 extern const size_t INDICATOR_LENGTH;
 
