@@ -1,7 +1,7 @@
 #include "include/message.hpp"
 #include <iostream>
 
-const size_t INDICATOR_LENGTH = sizeof(unsigned char);
+constexpr size_t INDICATOR_LENGTH = sizeof(unsigned char);
 
 /**
  * Convert int to HEX small-endian
