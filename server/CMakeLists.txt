@@ -4,9 +4,10 @@ project(SC6103-DS)
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_compile_definitions(DEBUG)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEBUG")
+endif()
 
 # 设置C++标准
-set(CMAKE_CXX_STANDARD 21)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # 包含头文件目录
