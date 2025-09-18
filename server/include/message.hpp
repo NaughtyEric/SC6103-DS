@@ -14,7 +14,7 @@ extern const size_t INDICATOR_LENGTH;
  * 代表消息中的一个参数
  * 它可以是一个字符串或一个整数。
  */
-class MessageParam: public Serializable {
+class MessageParam final : public Serializable {
     // binary representation of the parameter   参数的二进制表示
     std::string value;
     enum class Type {
@@ -23,15 +23,15 @@ class MessageParam: public Serializable {
     } type;
 
 public:
-    MessageParam()=default;
-    MessageParam(int);
-    MessageParam(std::string);
-    std::string getValueStr() const;
-    int getValueInt() const;
-    ~MessageParam();
+    MessageParam(): type(Type::STRING) {};
+    explicit MessageParam(const int&);
+    explicit MessageParam(const std::string&);
+    [[nodiscard]] std::string getValueStr() const;
+    [[nodiscard]] int getValueInt() const;
+    ~MessageParam() override;
 
-    std::string serialize() const override;
-    size_t deserialize(std::string data) override;
+    [[nodiscard]] std::string serialize() const override;
+    size_t deserialize(const std::string& data) override;
 };
 
 /**
@@ -41,19 +41,19 @@ public:
  * 用于远程调用的消息类
  * 它包含一个待调用的函数名和一组参数
  */
-class Message: public Serializable {
+class Message final : public Serializable {
     std::string functionName;
     std::vector<MessageParam> content;
 
 public:
     Message()=default;
-    ~Message()=default;
+    ~Message() override =default;
 
     // Get all message parameters waiting for serialization
-    const std::vector<MessageParam>& getContent() const;
+    [[nodiscard]] const std::vector<MessageParam>& getContent() const;
 
-    std::string serialize() const override;
-    size_t deserialize(std::string data) override;
+    [[nodiscard]] std::string serialize() const override;
+    size_t deserialize(const std::string &) override;
 
     // Append a message parameter at the end
     void appendMessageParam(const MessageParam& param);

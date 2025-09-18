@@ -9,7 +9,7 @@ constexpr size_t INDICATOR_LENGTH = sizeof(unsigned char);
  * 
  * 将整数值转换为小端格式的十六进制字符串
  */
-MessageParam::MessageParam(int intValue) {
+MessageParam::MessageParam(const int &intValue) {
     value = "";
     for (int i = 0; i < sizeof(int); i++) {
         char byte = (intValue >> (i * 8)) & 0xFF;
@@ -23,7 +23,7 @@ MessageParam::MessageParam(int intValue) {
  *
  * 将字符串值直接保存
  */
-MessageParam::MessageParam(std::string strValue) {
+MessageParam::MessageParam(const std::string& strValue) {
     value = strValue;
     type = Type::STRING;
 }
@@ -63,7 +63,7 @@ int MessageParam::getValueInt() const {
     return intValue;
 }
 
-MessageParam::~MessageParam() {}
+MessageParam::~MessageParam() = default;
 
 /**
  * Serialize the parameter.
@@ -86,7 +86,7 @@ std::string MessageParam::serialize() const {
         if (len >= 0xff) {
             throw std::runtime_error("Length of string to be serialized exceeds 254 characters");
         }
-        return char(len) + value;
+        return static_cast<char>(len) + value;
     }
 }
 
@@ -99,7 +99,7 @@ std::string MessageParam::serialize() const {
  *
  * @exception std::runtime_error if the data is insufficient
  */
-size_t MessageParam::deserialize(std::string data) {
+size_t MessageParam::deserialize(const std::string &data) {
     if (data.empty()) {
         throw std::runtime_error("Cannot deserialize from empty string");
     }
@@ -114,17 +114,17 @@ size_t MessageParam::deserialize(std::string data) {
         value = data.substr(INDICATOR_LENGTH, sizeof(int));
         type = Type::INT;
         return INDICATOR_LENGTH + sizeof(int);
-    } else { // string
-        size_t len = static_cast<size_t>(indicator);
-        if (data.length() < INDICATOR_LENGTH + len) {
-            std::string errorInfo = "Insufficient data for string deserialization";
-            errorInfo += " (expected " + std::to_string(INDICATOR_LENGTH + len) + ", got " + std::to_string(data.length()) + ")";
-            throw std::runtime_error(errorInfo.c_str());
-        }
-        value = data.substr(INDICATOR_LENGTH, len);
-        type = Type::STRING;
-        return INDICATOR_LENGTH + len;
     }
+    // string
+    auto len = static_cast<size_t>(indicator);
+    if (data.length() < INDICATOR_LENGTH + len) {
+        std::string errorInfo = "Insufficient data for string deserialization";
+        errorInfo += " (expected " + std::to_string(INDICATOR_LENGTH + len) + ", got " + std::to_string(data.length()) + ")";
+        throw std::runtime_error(errorInfo.c_str());
+    }
+    value = data.substr(INDICATOR_LENGTH, len);
+    type = Type::STRING;
+    return INDICATOR_LENGTH + len;
 }
 
 /**
@@ -158,7 +158,7 @@ std::string Message::serialize() const {
  * 
  * @exception std::runtime_error if the data is invalid or insufficient
  */
-size_t Message::deserialize(std::string data) {
+size_t Message::deserialize(const std::string& data) {
     content.clear();
     size_t pos = 0;
     while (pos < data.length()) {

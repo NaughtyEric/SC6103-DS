@@ -20,7 +20,7 @@ private:
      * Deserializes the object from a string.
      * @param data The serialized string representation of the object.
      */
-    virtual size_t deserialize(std::string data) = 0;
+    virtual size_t deserialize(const std::string &data) = 0;
 };
 
 #endif
