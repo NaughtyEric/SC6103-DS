@@ -2,7 +2,7 @@
 #include <iostream>
 #include <stdexcept>
 
-const size_t INDICATOR_LENGTH = sizeof(unsigned char);
+constexpr size_t INDICATOR_LENGTH = sizeof(unsigned char);
 
 /**
  * Convert int to HEX small-endian
@@ -181,4 +181,8 @@ size_t Message::deserialize(std::string data) {
         }
     }
     return pos;
+}
+
+void Message::appendMessageParam(const MessageParam& param) {
+   content.push_back(param);
 }

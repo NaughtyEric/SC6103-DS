@@ -56,7 +56,7 @@ public:
     size_t deserialize(std::string data) override;
 
     // Append a message parameter at the end
-    bool appendMessageParam(const MessageParam& param);
+    void appendMessageParam(const MessageParam& param);
 };
 
 #endif
