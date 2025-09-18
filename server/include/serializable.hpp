@@ -6,11 +6,15 @@
 #include <string>
 
 class Serializable {
+public:
+    virtual ~Serializable() = default;
+
+private:
     /**
      * Serializes the object to a string.
      * @return The serialized string representation of the object.
      */
-    virtual std::string serialize() const = 0;
+    [[nodiscard]] virtual std::string serialize() const = 0;
 
     /**
      * Deserializes the object from a string.
