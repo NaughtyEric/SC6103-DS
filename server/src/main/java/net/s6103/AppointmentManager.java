@@ -147,7 +147,6 @@ public class AppointmentManager {
         }
     }
 
-
     /**
      * Get a handle for a specific client
      * @param clientId the client ID
