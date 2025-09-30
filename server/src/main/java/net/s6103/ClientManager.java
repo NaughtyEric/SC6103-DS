@@ -14,27 +14,13 @@ public class ClientManager {
 
     public ClientManager() {}
 
-//    public void setHeartbeat(int heartBeat) {
-//        this.heartBeat = heartBeat;
-//    }
-//    public int getHeartBeat() {
-//        return heartBeat;
-//    }
-
     public void updateClient(int identifier, InetAddress ip, int port) {
-        clients.put(identifier, new ClientInfo(identifier, ip, port, Instant.now()));
+        clients.put(identifier, new ClientInfo(identifier, ip, port));
     }
 
     public void updateClient(int identifier, ClientInfo clientInfo) {
         clients.put(identifier, clientInfo);
     }
-
-//    public void checkTimeouts() {
-//        Instant now = Instant.now();
-//        clients.values().removeIf(client ->
-//                now.getEpochSecond() - client.getLastSeen().getEpochSecond() > heartBeat
-//        );
-//    }
 
     public ClientInfo findClient(int identifier) {
         return  clients.get(identifier);

@@ -1,19 +1,16 @@
 package net.s6103;
 
 import java.net.InetAddress;
-import java.time.Instant;
 
 public class ClientInfo {
     private final int identifier;
     private final InetAddress ip;
     private final int port;
-    private final Instant lastSeen;
 
-    ClientInfo(int identifier, InetAddress ip, int port, Instant lastSeen) {
+    ClientInfo(int identifier, InetAddress ip, int port) {
         this.identifier = identifier;
         this.ip = ip;
         this.port = port;
-        this.lastSeen = lastSeen;
     }
 
     public int getIdentifier() {
@@ -28,7 +25,4 @@ public class ClientInfo {
         return port;
     }
 
-    public Instant getLastSeen() {
-        return lastSeen;
-    }
 }
