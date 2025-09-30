@@ -1,28 +1,25 @@
 package net.s6103;
 
 import java.net.InetAddress;
-import java.time.Instant;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Server-side client manager for UDP connections
  */
 public class ClientManager {
-//    private int heartBeat = 30;
-    private final Map<Integer, ClientInfo> clients = new ConcurrentHashMap<>();
-
+    private final List<ClientInfo> clients = new ArrayList<>();
     public ClientManager() {}
 
-    public void updateClient(int identifier, InetAddress ip, int port) {
-        clients.put(identifier, new ClientInfo(identifier, ip, port));
+    public void addClient(ClientInfo info) {
+        if (findClient(info) == null) clients.add(info);
     }
-
-    public void updateClient(int identifier, ClientInfo clientInfo) {
-        clients.put(identifier, clientInfo);
-    }
-
-    public ClientInfo findClient(int identifier) {
-        return  clients.get(identifier);
+    public ClientInfo findClient(ClientInfo info) {
+        for (ClientInfo c : clients) {
+            if (c.getIp().equals(info.getIp()) && c.getPort() == info.getPort()) {
+                return c;
+            }
+        }
+        return null;
     }
 }
