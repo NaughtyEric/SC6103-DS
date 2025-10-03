@@ -1,7 +1,7 @@
 package net.s6103;
 
-import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -21,5 +21,18 @@ public class ClientManager {
             }
         }
         return null;
+    }
+
+    public ClientInfo removeClient(ClientInfo info) {
+        Iterator<ClientInfo> it = clients.iterator();
+        while (it.hasNext()) {
+            ClientInfo c = it.next();
+            if (c.getIp().equals(info.getIp()) && c.getPort() == info.getPort()) {
+                it.remove();
+                return c;
+            }
+        }
+        return null;
+
     }
 }
