@@ -16,7 +16,7 @@ public class ClientManager {
     }
     public ClientInfo findClient(ClientInfo info) {
         for (ClientInfo c : clients) {
-            if (c.getIp().equals(info.getIp()) && c.getPort() == info.getPort()) {
+            if (c.ip().equals(info.ip()) && c.port() == info.port()) {
                 return c;
             }
         }
@@ -27,7 +27,7 @@ public class ClientManager {
         Iterator<ClientInfo> it = clients.iterator();
         while (it.hasNext()) {
             ClientInfo c = it.next();
-            if (c.getIp().equals(info.getIp()) && c.getPort() == info.getPort()) {
+            if (c.ip().equals(info.ip()) && c.port() == info.port()) {
                 it.remove();
                 return c;
             }
