@@ -3,21 +3,21 @@ package net.s6103;
 import java.time.*;
 
 public class Appointment {
-    private final int clientId;
+    private final ClientInfo clientInfo;
     private final int appointmentId;
     private final String facilityName;
     private Instant beginTime;
     private int lastingSeconds;
 
-    public Appointment(int clientId, int appointmentId, String facilityName, Instant beginTime, int lastingSeconds) {
-        this.clientId = clientId;
+    public Appointment(ClientInfo clientId, int appointmentId, String facilityName, Instant beginTime, int lastingSeconds) {
+        this.clientInfo = clientId;
         this.appointmentId = appointmentId;
         this.facilityName = facilityName;
         this.beginTime = beginTime;
         this.lastingSeconds = lastingSeconds;
     }
 
-    public final int getClientId() {return clientId;}
+    public final ClientInfo getClientInfo() {return clientInfo;}
     public final int getAppointmentId() {return appointmentId;}
     public final Instant getBeginTime() {return beginTime;}
     public final Instant getEndTime() {return beginTime.plusSeconds(lastingSeconds);}
