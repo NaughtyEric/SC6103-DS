@@ -1,106 +1,118 @@
 package net.s6103;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Logger;
 
 public class AppointmentManager {
+    // mapping from appointment id to appointment
     private final Map<Integer, Appointment> appointments = new ConcurrentHashMap<>();
-    public AppointmentManager() {}
-    private final ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock(); // appointment lock
-    private final ReentrantLock idLock = new ReentrantLock(); // appointment id lock
+    // mapping from facility name to list of monitors
+    private final Map<String, List<Monitor>> facilityMonitors = new ConcurrentHashMap<>();
+    // scheduler for monitor notifications
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     static private int nextAppointmentId = 1;
+    // lock for appointments
+    private final ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock();
+    // lock for appointment id
+    private final ReentrantLock appointmentIdLock = new ReentrantLock();
+
+    public AppointmentManager() {
+        // periodic cleanup task: remove expired monitors every minute
+        scheduler.scheduleAtFixedRate(this::cleanupExpiredMonitors, 1, 60, TimeUnit.SECONDS);
+    }
 
     public class AppointmentManagerHandle {
-        final private int clientId;
-        final private AppointmentManager _manager;
+        private final ClientInfo clientInfo;
+        private final AppointmentManager _manager;
 
-        public AppointmentManagerHandle(int clientId, AppointmentManager manager) {
-            this.clientId = clientId;
+        public AppointmentManagerHandle(ClientInfo clientInfo, AppointmentManager manager) {
+            this.clientInfo = clientInfo;
             this._manager = manager;
         }
 
-        final public Appointment[] query(String facilityName, LocalDate days) {
-            var start = days.atStartOfDay().toInstant(java.time.ZoneOffset.UTC);
-            var end = days.plusDays(1).atStartOfDay().toInstant(java.time.ZoneOffset.UTC);
+        public Appointment[] query(String facilityName, LocalDate day) {
+            var start = day.atStartOfDay().toInstant(java.time.ZoneOffset.UTC);
+            var end = day.plusDays(1).atStartOfDay().toInstant(java.time.ZoneOffset.UTC);
             rwLock.readLock().lock();
             try {
                 return _manager.appointments.values().stream()
-                        .filter(appointment -> appointment.getFacilityName().equals(facilityName))
-                        .filter(appointment -> appointment.getBeginTime().isBefore(end) &&
-                                appointment.getEndTime().isAfter(start))
+                        .filter(a -> a.getFacilityName().equals(facilityName))
+                        .filter(a -> a.getBeginTime().isBefore(end) && a.getEndTime().isAfter(start))
                         .toArray(Appointment[]::new);
             } finally {
                 rwLock.readLock().unlock();
             }
         }
 
-        final public int book(String facilityName, Instant start, Instant end) throws Exception {
-            if (! ValidFacilities.isValidFacility(facilityName)) {
+        public int book(String facilityName, Instant start, Instant end) throws Exception {
+            if (!ValidFacilities.isValidFacility(facilityName)) {
                 throw new Exception("Invalid facility name");
             }
-            int lastingSeconds = (int)(end.getEpochSecond() - start.getEpochSecond());
-            int id = -1;
+            int lastingSeconds = (int) (end.getEpochSecond() - start.getEpochSecond());
             if (lastingSeconds <= 0) {
                 Logger.getGlobal().warning("Invalid time range");
                 return -1;
             }
+            int id = -1;
             boolean conflict = false;
-            idLock.lock();   // lock appointment id
+            appointmentIdLock.lock();
             try {
-                var appointment = new Appointment(clientId, nextAppointmentId, facilityName, start, lastingSeconds);
-                rwLock.writeLock().lock();  // lock appointments for writing
+                var appointment = new Appointment(clientInfo, nextAppointmentId, facilityName, start, lastingSeconds);
+                rwLock.writeLock().lock();
                 try {
-                    for (var existingAppointment : _manager.appointments.values()) {
-                        if (existingAppointment.getFacilityName().equals(facilityName)) {
-                            if (existingAppointment.getBeginTime().isBefore(appointment.getEndTime()) &&
-                                    existingAppointment.getEndTime().isAfter(appointment.getBeginTime())) {
+                    for (var existing : _manager.appointments.values()) {
+                        if (existing.getFacilityName().equals(facilityName)) {
+                            if (existing.getBeginTime().isBefore(appointment.getEndTime())
+                                    && existing.getEndTime().isAfter(appointment.getBeginTime())) {
                                 conflict = true;
                                 break;
                             }
                         }
                     }
                     if (!conflict) {
-                        id = nextAppointmentId; // save id to return
+                        id = nextAppointmentId;
                         _manager.appointments.put(id, appointment);
                         nextAppointmentId++;
                     }
                 } finally {
-                    rwLock.writeLock().unlock(); // release appointment write lock
+                    rwLock.writeLock().unlock();
                 }
             } finally {
-                idLock.unlock(); // release appointment id lock
+                appointmentIdLock.unlock();
             }
             if (conflict) {
-                Logger.getGlobal().info("Booking conflict");
+                Logger.getGlobal().info("Booking conflict for client " + clientInfo);
             } else {
-                Logger.getGlobal().info("Booking successful: " + id);
+                Logger.getGlobal().info("Booking successful: " + id + " by " + clientInfo);
             }
             return id;
         }
 
-        final public boolean change(int appointmentId, int offsetMinutes) {
+        public boolean change(int appointmentId, int offsetMinutes) {
             boolean result = false;
             rwLock.writeLock().lock();
             try {
                 var appointment = _manager.appointments.get(appointmentId);
                 if (appointment == null) {
                     Logger.getGlobal().warning("No such appointment: " + appointmentId);
-                } else if (appointment.getClientId() != clientId) {
-                    Logger.getGlobal().warning("Client " + clientId + " trying to change appointment of client " + appointment.getClientId());
+                } else if (!appointment.getClientInfo().equals(clientInfo)) {
+                    Logger.getGlobal().warning("Client " + clientInfo + " trying to change appointment of " + appointment.getClientInfo());
                 } else {
-                    var newBeginTime = appointment.getBeginTime().plusSeconds(offsetMinutes * 60);
-                    var newEndTime = appointment.getEndTime().plusSeconds(offsetMinutes * 60);
+                    var newBeginTime = appointment.getBeginTime().plusSeconds(offsetMinutes * 60L);
+                    var newEndTime = appointment.getEndTime().plusSeconds(offsetMinutes * 60L);
                     boolean conflict = false;
-                    for (var existingAppointment : _manager.appointments.values()) {
-                        if (existingAppointment.getAppointmentId() != appointmentId &&
-                                existingAppointment.getFacilityName().equals(appointment.getFacilityName())) {
-                            if (existingAppointment.getBeginTime().isBefore(newEndTime) &&
-                                    existingAppointment.getEndTime().isAfter(newBeginTime)) {
+                    for (var existing : _manager.appointments.values()) {
+                        if (existing.getAppointmentId() != appointmentId &&
+                                existing.getFacilityName().equals(appointment.getFacilityName())) {
+                            if (existing.getBeginTime().isBefore(newEndTime)
+                                    && existing.getEndTime().isAfter(newBeginTime)) {
                                 conflict = true;
                                 break;
                             }
@@ -108,10 +120,10 @@ public class AppointmentManager {
                     }
                     if (!conflict) {
                         appointment.delay(offsetMinutes);
-                        Logger.getGlobal().info("Appointment " + appointmentId + " changed by client " + clientId);
+                        Logger.getGlobal().info("Appointment " + appointmentId + " changed by " + clientInfo);
                         result = true;
                     } else {
-                        Logger.getGlobal().info("Change conflict for appointment " + appointmentId + " by client " + clientId);
+                        Logger.getGlobal().info("Change conflict for appointment " + appointmentId + " by " + clientInfo);
                     }
                 }
             } finally {
@@ -120,18 +132,18 @@ public class AppointmentManager {
             return result;
         }
 
-        final public boolean cancel(int appointmentId) {
+        public boolean cancel(int appointmentId) {
             boolean result = false;
             rwLock.writeLock().lock();
             try {
                 var appointment = _manager.appointments.get(appointmentId);
                 if (appointment == null) {
                     Logger.getGlobal().warning("No such appointment: " + appointmentId);
-                }else if (appointment.getClientId() != clientId) {
-                    Logger.getGlobal().warning("Client " + clientId + " trying to cancel appointment of client " + appointment.getClientId());
+                } else if (!appointment.getClientInfo().equals(clientInfo)) {
+                    Logger.getGlobal().warning("Client " + clientInfo + " trying to cancel appointment of " + appointment.getClientInfo());
                 } else {
                     _manager.appointments.remove(appointmentId);
-                    Logger.getGlobal().info("Appointment " + appointmentId + " cancelled by client " + clientId);
+                    Logger.getGlobal().info("Appointment " + appointmentId + " cancelled by " + clientInfo);
                     result = true;
                 }
             } finally {
@@ -139,22 +151,54 @@ public class AppointmentManager {
             }
             return result;
         }
-        
-        /* TODO: 监控(string facility name, uint monitor_interval) */
 
-        final public boolean checkIn(int appointmentId) {
-            return false;
+        public void monitor(String facilityName, Duration monitorInterval) {
+            if (!ValidFacilities.isValidFacility(facilityName)) {
+                Logger.getGlobal().warning("Invalid facility name: " + facilityName);
+                return;
+            }
+            var monitor = new Monitor(clientInfo, monitorInterval);
+            _manager.facilityMonitors
+                    .computeIfAbsent(facilityName, k -> new CopyOnWriteArrayList<>())
+                    .add(monitor);
+            Logger.getGlobal().info(clientInfo + " starts monitoring " + facilityName + " for " + monitorInterval.toMinutes() + " minutes.");
+            _manager.facilityMonitors.get(facilityName).removeIf(m -> m.getClient().equals(clientInfo));
+            Logger.getGlobal().info("Monitor expired for client " + clientInfo + " on facility " + facilityName);
+        }
+
+        public boolean checkIn(int appointmentId) {
+            boolean result = false;
+            rwLock.writeLock().lock();
+            try {
+                var appointment = _manager.appointments.get(appointmentId);
+                if (appointment == null) {
+                    Logger.getGlobal().warning("No such appointment: " + appointmentId);
+                } else if (!appointment.getClientInfo().equals(clientInfo)) {
+                    Logger.getGlobal().warning("Client " + clientInfo + " trying to check in appointment of " + appointment.getClientInfo());
+                } else {
+                    var now = Instant.now();
+                    if (now.isBefore(appointment.getBeginTime()) || now.isAfter(appointment.getEndTime())) {
+                        Logger.getGlobal().warning("Check-in time out of range for appointment " + appointmentId + " by " + clientInfo);
+                    } else {
+                        appointment.checkIn(now);
+                        Logger.getGlobal().info("Appointment " + appointmentId + " checked in by " + clientInfo);
+                        result = true;
+                    }
+                }
+            } finally {
+                rwLock.writeLock().unlock();
+            }
+            return result;
         }
     }
 
-    /**
-     * Get a handle for a specific client
-     * @param clientId the client ID
-     * @return the handle
-     */
-    public AppointmentManagerHandle getHandle(int clientId) {
-        return new AppointmentManagerHandle(clientId, this);
+    public AppointmentManagerHandle getHandle(ClientInfo client) {
+        return new AppointmentManagerHandle(client, this);
     }
 
+    private void cleanupExpiredMonitors() {
+        for (var entry : facilityMonitors.entrySet()) {
+            entry.getValue().removeIf(Monitor::isExpired);
+        }
+    }
 }
-

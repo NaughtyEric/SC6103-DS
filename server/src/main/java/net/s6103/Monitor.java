@@ -13,7 +13,7 @@ public class Monitor {
 
     public Monitor(ClientInfo client, Duration monitorInterval) {
         this.beginInstant = Instant.now();
-        // throw exception if longer than 7 days
+        // TODO: throw exception if longer than 7 days
 
         this.monitorInterval = monitorInterval;
         this.client = client;
