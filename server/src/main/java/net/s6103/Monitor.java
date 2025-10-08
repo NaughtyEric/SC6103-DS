@@ -13,8 +13,9 @@ public class Monitor {
 
     public Monitor(ClientInfo client, Duration monitorInterval) {
         this.beginInstant = Instant.now();
-        // TODO: throw exception if longer than 7 days
-
+        if (monitorInterval.toSeconds() > 60 * 60 * 24 * 7) {
+            throw new IllegalArgumentException("Monitor interval too long");
+        }
         this.monitorInterval = monitorInterval;
         this.client = client;
     }
