@@ -83,7 +83,7 @@ bool UdpClient::sendRequestAwaitReply(const std::vector<uint8_t>& request,
                                       bool verboseLog) {
     sockaddr_in server{};
     server.sin_family = AF_INET;
-    InetPton(AF_INET, std::wstring(serverIp_.begin(), serverIp_.end()).c_str(), &server.sin_addr);
+    InetPtonA(AF_INET, serverIp_.c_str(), &server.sin_addr);
     server.sin_port = htons(serverPort_);
 
     std::random_device rd;
