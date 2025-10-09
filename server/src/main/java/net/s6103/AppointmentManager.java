@@ -159,7 +159,7 @@ public class AppointmentManager {
             }
             var monitor = new Monitor(clientInfo, monitorInterval);
             _manager.facilityMonitors
-                    .computeIfAbsent(facilityName, k -> new CopyOnWriteArrayList<>())
+                    .computeIfAbsent(facilityName, _ -> new CopyOnWriteArrayList<>())
                     .add(monitor);
             Logger.getGlobal().info(clientInfo + " starts monitoring " + facilityName + " for " + monitorInterval.toMinutes() + " minutes.");
             _manager.facilityMonitors.get(facilityName).removeIf(m -> m.getClient().equals(clientInfo));
