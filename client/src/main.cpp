@@ -6,6 +6,7 @@
 #include <cstring>
 #include <string>
 #include <vector>
+#include <iostream>
 
 using namespace fbk;
 
@@ -40,15 +41,22 @@ static bool sendAndPrint(UdpClient& cli, OpCode op, const std::vector<uint8_t>& 
 
 // 1. Query availability
 static bool doQuery(UdpClient& cli, Semantics sem) {
-    char facility[256];
+    std::string facility;
     std::printf("Enter facility name: ");
-    if (std::scanf("%255s", facility) != 1) return false;
+    std::cin.ignore(); // Clear any remaining newline from previous input
+    std::getline(std::cin, facility);
+    if (facility.empty()) return false;
     
     std::printf("Enter days (1-7 for Mon-Sun, space separated, 0 to finish): ");
     std::vector<uint32_t> days;
     int day;
-    while (std::scanf("%d", &day) == 1 && day != 0) {
+    while (std::cin >> day && day != 0) {
         if (day >= 1 && day <= 7) days.push_back(static_cast<uint32_t>(day));
+    }
+    
+    if (days.empty()) {
+        std::puts("Error: At least one day must be specified.");
+        return false;
     }
     
     std::vector<uint8_t> payload;
@@ -61,15 +69,17 @@ static bool doQuery(UdpClient& cli, Semantics sem) {
 
 // 2. Book facility
 static bool doBook(UdpClient& cli, Semantics sem) {
-    char facility[256];
+    std::string facility;
     std::printf("Enter facility name: ");
-    if (std::scanf("%255s", facility) != 1) return false;
+    std::cin.ignore();
+    std::getline(std::cin, facility);
+    if (facility.empty()) return false;
     
     int startDay, startHour, startMin, endDay, endHour, endMin;
     std::printf("Enter start time (day hour min): ");
-    if (std::scanf("%d %d %d", &startDay, &startHour, &startMin) != 3) return false;
+    if (!(std::cin >> startDay >> startHour >> startMin)) return false;
     std::printf("Enter end time (day hour min): ");
-    if (std::scanf("%d %d %d", &endDay, &endHour, &endMin) != 3) return false;
+    if (!(std::cin >> endDay >> endHour >> endMin)) return false;
     
     std::vector<uint8_t> payload;
     appendString(payload, std::string(facility));
@@ -85,13 +95,15 @@ static bool doBook(UdpClient& cli, Semantics sem) {
 
 // 3. Change booking
 static bool doChange(UdpClient& cli, Semantics sem) {
-    char confirmId[256];
+    std::string confirmId;
     std::printf("Enter confirmation ID: ");
-    if (std::scanf("%255s", confirmId) != 1) return false;
+    std::cin.ignore();
+    std::getline(std::cin, confirmId);
+    if (confirmId.empty()) return false;
     
     int offsetMin;
     std::printf("Enter offset in minutes (positive=delay, negative=advance): ");
-    if (std::scanf("%d", &offsetMin) != 1) return false;
+    if (!(std::cin >> offsetMin)) return false;
     
     std::vector<uint8_t> payload;
     appendString(payload, std::string(confirmId));
@@ -102,13 +114,15 @@ static bool doChange(UdpClient& cli, Semantics sem) {
 
 // 4. Monitor facility
 static bool doMonitor(UdpClient& cli, Semantics sem) {
-    char facility[256];
+    std::string facility;
     std::printf("Enter facility name: ");
-    if (std::scanf("%255s", facility) != 1) return false;
+    std::cin.ignore();
+    std::getline(std::cin, facility);
+    if (facility.empty()) return false;
     
     int durationSec;
     std::printf("Enter monitor duration in seconds: ");
-    if (std::scanf("%d", &durationSec) != 1) return false;
+    if (!(std::cin >> durationSec)) return false;
     
     // Register for monitoring
     std::vector<uint8_t> payload;
@@ -137,7 +151,7 @@ static bool doMonitor(UdpClient& cli, Semantics sem) {
 static bool doCancel(UdpClient& cli, Semantics sem) {
     uint32_t bookingId;
     std::printf("Enter booking ID to cancel: ");
-    if (std::scanf("%u", &bookingId) != 1) return false;
+    if (!(std::cin >> bookingId)) return false;
     
     std::vector<uint8_t> payload;
     appendUint32(payload, bookingId);
@@ -149,7 +163,7 @@ static bool doCancel(UdpClient& cli, Semantics sem) {
 static bool doCheckIn(UdpClient& cli, Semantics sem) {
     uint32_t bookingId;
     std::printf("Enter booking ID to check in: ");
-    if (std::scanf("%u", &bookingId) != 1) return false;
+    if (!(std::cin >> bookingId)) return false;
     
     std::vector<uint8_t> payload;
     appendUint32(payload, bookingId);
@@ -187,7 +201,7 @@ int main(int argc, char** argv) {
         std::puts("0) Exit");
         std::printf("Select: ");
         int choice = -1;
-        if (std::scanf("%d", &choice) != 1) break;
+        if (!(std::cin >> choice)) break;
         if (choice == 0) break;
         switch (choice) {
             case 1:

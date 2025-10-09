@@ -74,7 +74,9 @@ public class ServerUdpThread extends Thread {
 
     private byte[] processRequest(byte[] data, InetAddress clientAddress, int clientPort) {
         try {
+            System.out.println("Received " + data.length + " bytes from " + clientAddress + ":" + clientPort);
             if (data.length < 24) { // Minimum message header length
+                System.err.println("Message too short: " + data.length + " bytes");
                 return createErrorResponse(4, "Invalid message format");
             }
 
@@ -90,11 +92,18 @@ public class ServerUdpThread extends Thread {
             int semantics = buffer.getInt();
             int payloadLen = buffer.getInt();
 
+            System.out.println("Parsed header: magic=0x" + Integer.toHexString(magic) + 
+                             ", version=" + version + ", requestId=" + requestId + 
+                             ", opCode=" + opCode + ", payloadLen=" + payloadLen);
+
             // Validate magic number and version
             if (magic != MAGIC) {
+                System.err.println("Invalid magic: expected 0x" + Integer.toHexString(MAGIC) + 
+                                 ", got 0x" + Integer.toHexString(magic));
                 return createErrorResponse(4, "Invalid magic number");
             }
             if (version != VERSION) {
+                System.err.println("Invalid version: expected " + VERSION + ", got " + version);
                 return createErrorResponse(4, "Unsupported version");
             }
 
@@ -126,12 +135,14 @@ public class ServerUdpThread extends Thread {
 
     private byte[] handleQueryAvailability(ByteBuffer buffer, int payloadLen, int requestId) {
         try {
+            System.out.println("handleQueryAvailability: payloadLen=" + payloadLen);
             if (payloadLen < 4) {
                 return createErrorResponse(3, "Invalid payload");
             }
 
             // 读取设施名称
             int facilityNameLen = buffer.getInt();
+            System.out.println("facilityNameLen=" + facilityNameLen);
             if (facilityNameLen < 0 || facilityNameLen > payloadLen - 4) {
                 return createErrorResponse(3, "Invalid facility name length");
             }
@@ -139,10 +150,13 @@ public class ServerUdpThread extends Thread {
             byte[] facilityNameBytes = new byte[facilityNameLen];
             buffer.get(facilityNameBytes);
             String facilityName = new String(facilityNameBytes, StandardCharsets.UTF_8);
+            System.out.println("facilityName='" + facilityName + "'");
 
             // 读取查询天数
             int dayCount = buffer.getInt();
+            System.out.println("dayCount=" + dayCount);
             if (dayCount < 1 || dayCount > 7) {
+                System.err.println("Invalid day count: " + dayCount + " (expected 1-7)");
                 return createErrorResponse(3, "Invalid day count");
             }
 
@@ -312,28 +326,33 @@ public class ServerUdpThread extends Thread {
     private byte[] createResponse(int requestId, int status, String message) {
         try {
             byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
-            int totalLen = 24 + 4 + 4 + messageBytes.length; // header + status + messageLen + message
+            int headerLen = 7 * 4; // 7 int fields * 4 bytes each = 28 bytes
+            int payloadLen = 4 + 4 + messageBytes.length; // status + messageLen + message
+            int totalLen = headerLen + payloadLen;
 
             ByteBuffer buffer = ByteBuffer.allocate(totalLen);
             buffer.order(ByteOrder.BIG_ENDIAN);
 
-            // Message header
+            // Message header (7 int fields = 28 bytes)
             buffer.putInt(MAGIC);
             buffer.putInt(VERSION);
             buffer.putInt(requestId);
             buffer.putInt(0); // opCode (response)
             buffer.putInt((int)(System.currentTimeMillis() / 1000)); // timestamp
             buffer.putInt(0); // semantics
-            buffer.putInt(4 + 4 + messageBytes.length); // payloadLen
+            buffer.putInt(payloadLen); // payloadLen
 
             // Status and message
             buffer.putInt(status);
             buffer.putInt(messageBytes.length);
             buffer.put(messageBytes);
 
+            System.out.println("Created response: requestId=" + requestId + ", status=" + status + 
+                             ", message='" + message + "', totalLen=" + totalLen);
             return buffer.array();
         } catch (Exception e) {
             System.err.println("Error creating response: " + e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }

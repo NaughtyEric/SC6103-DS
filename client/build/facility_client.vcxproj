@@ -1,0 +1,375 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{056793A7-5DC9-3463-8019-5CD944245AC9}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>facility_client</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\build\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">facility_client.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">facility_client</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\build\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">facility_client.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">facility_client</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\build\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">facility_client.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">facility_client</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\build\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">facility_client.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">facility_client</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <DataExecutionPrevention></DataExecutionPrevention>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers></ImageHasSafeExceptionHandlers>
+      <ImportLibrary>C:/Users/simon/Desktop/DS_assignment/SC6103-DS/client/build/Debug/facility_client.lib</ImportLibrary>
+      <LinkErrorReporting></LinkErrorReporting>
+      <ProgramDataBaseFile>C:/Users/simon/Desktop/DS_assignment/SC6103-DS/client/build/Debug/facility_client.pdb</ProgramDataBaseFile>
+      <RandomizedBaseAddress></RandomizedBaseAddress>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <DataExecutionPrevention></DataExecutionPrevention>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers></ImageHasSafeExceptionHandlers>
+      <ImportLibrary>C:/Users/simon/Desktop/DS_assignment/SC6103-DS/client/build/Release/facility_client.lib</ImportLibrary>
+      <LinkErrorReporting></LinkErrorReporting>
+      <ProgramDataBaseFile>C:/Users/simon/Desktop/DS_assignment/SC6103-DS/client/build/Release/facility_client.pdb</ProgramDataBaseFile>
+      <RandomizedBaseAddress></RandomizedBaseAddress>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <DataExecutionPrevention></DataExecutionPrevention>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers></ImageHasSafeExceptionHandlers>
+      <ImportLibrary>C:/Users/simon/Desktop/DS_assignment/SC6103-DS/client/build/MinSizeRel/facility_client.lib</ImportLibrary>
+      <LinkErrorReporting></LinkErrorReporting>
+      <ProgramDataBaseFile>C:/Users/simon/Desktop/DS_assignment/SC6103-DS/client/build/MinSizeRel/facility_client.pdb</ProgramDataBaseFile>
+      <RandomizedBaseAddress></RandomizedBaseAddress>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RemoveUnreferencedCodeData></RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
+      <TreatWChar_tAsBuiltInType></TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <DataExecutionPrevention></DataExecutionPrevention>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers></ImageHasSafeExceptionHandlers>
+      <ImportLibrary>C:/Users/simon/Desktop/DS_assignment/SC6103-DS/client/build/RelWithDebInfo/facility_client.lib</ImportLibrary>
+      <LinkErrorReporting></LinkErrorReporting>
+      <ProgramDataBaseFile>C:/Users/simon/Desktop/DS_assignment/SC6103-DS/client/build/RelWithDebInfo/facility_client.pdb</ProgramDataBaseFile>
+      <RandomizedBaseAddress></RandomizedBaseAddress>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/simon/Desktop/DS_assignment/SC6103-DS/client/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"D:\Program File\CMake\bin\cmake.exe" -SC:/Users/simon/Desktop/DS_assignment/SC6103-DS/client -BC:/Users/simon/Desktop/DS_assignment/SC6103-DS/client/build --check-stamp-file C:/Users/simon/Desktop/DS_assignment/SC6103-DS/client/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\build\CMakeFiles\4.1.1\CMakeCXXCompiler.cmake;C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\build\CMakeFiles\4.1.1\CMakeRCCompiler.cmake;C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\build\CMakeFiles\4.1.1\CMakeSystem.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeCXXCompiler.cmake.in;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeCXXCompilerABI.cpp;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeCXXInformation.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeCommonLanguageInclude.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeCompilerIdDetection.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeDetermineCXXCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeDetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeDetermineCompilerABI.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeDetermineCompilerId.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeDetermineCompilerSupport.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeDetermineRCCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeFindBinUtils.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeGenericSystem.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeInitializeConfigs.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeLanguageInformation.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeParseImplicitIncludeInfo.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeParseImplicitLinkInfo.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeParseLibraryArchitecture.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeRCCompiler.cmake.in;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeRCInformation.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeSystemSpecificInformation.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeSystemSpecificInitialize.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeTestCXXCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeTestCompilerCommon.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeTestRCCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\ADSP-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\ARMCC-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\ARMClang-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\AppleClang-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Borland-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Clang-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Compaq-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Cray-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\CrayClang-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Diab-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Embarcadero-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Fujitsu-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\FujitsuClang-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\GHS-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\GNU-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\HP-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\IAR-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\IBMClang-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Intel-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\IntelLLVM-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\LCC-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\MSVC-CXX.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\MSVC-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\MSVC.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\NVHPC-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\NVIDIA-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\OpenWatcom-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\OrangeC-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\PGI-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\PathScale-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Renesas-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\SCO-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\SunPro-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\TI-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\TIClang-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Tasking-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\VisualAge-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Watcom-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\XL-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\XLClang-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\zOS-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CompilerId\VS-10.vcxproj.in;D:\Program File\CMake\share\cmake-4.1\Modules\Internal\CMakeCXXLinkerInformation.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Internal\CMakeCommonLinkerInformation.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Internal\CMakeDetermineLinkerId.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Internal\CMakeInspectCXXLinker.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Internal\FeatureTesting.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Linker\MSVC-CXX.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Linker\MSVC.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Linker\Windows-MSVC-CXX.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Linker\Windows-MSVC.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Windows-Determine-CXX.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Windows-Initialize.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Windows-MSVC-CXX.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Windows-MSVC.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Windows.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\WindowsPaths.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/simon/Desktop/DS_assignment/SC6103-DS/client/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"D:\Program File\CMake\bin\cmake.exe" -SC:/Users/simon/Desktop/DS_assignment/SC6103-DS/client -BC:/Users/simon/Desktop/DS_assignment/SC6103-DS/client/build --check-stamp-file C:/Users/simon/Desktop/DS_assignment/SC6103-DS/client/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\build\CMakeFiles\4.1.1\CMakeCXXCompiler.cmake;C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\build\CMakeFiles\4.1.1\CMakeRCCompiler.cmake;C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\build\CMakeFiles\4.1.1\CMakeSystem.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeCXXCompiler.cmake.in;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeCXXCompilerABI.cpp;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeCXXInformation.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeCommonLanguageInclude.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeCompilerIdDetection.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeDetermineCXXCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeDetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeDetermineCompilerABI.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeDetermineCompilerId.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeDetermineCompilerSupport.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeDetermineRCCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeFindBinUtils.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeGenericSystem.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeInitializeConfigs.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeLanguageInformation.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeParseImplicitIncludeInfo.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeParseImplicitLinkInfo.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeParseLibraryArchitecture.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeRCCompiler.cmake.in;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeRCInformation.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeSystemSpecificInformation.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeSystemSpecificInitialize.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeTestCXXCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeTestCompilerCommon.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeTestRCCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\ADSP-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\ARMCC-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\ARMClang-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\AppleClang-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Borland-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Clang-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Compaq-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Cray-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\CrayClang-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Diab-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Embarcadero-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Fujitsu-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\FujitsuClang-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\GHS-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\GNU-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\HP-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\IAR-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\IBMClang-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Intel-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\IntelLLVM-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\LCC-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\MSVC-CXX.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\MSVC-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\MSVC.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\NVHPC-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\NVIDIA-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\OpenWatcom-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\OrangeC-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\PGI-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\PathScale-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Renesas-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\SCO-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\SunPro-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\TI-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\TIClang-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Tasking-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\VisualAge-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Watcom-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\XL-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\XLClang-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\zOS-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CompilerId\VS-10.vcxproj.in;D:\Program File\CMake\share\cmake-4.1\Modules\Internal\CMakeCXXLinkerInformation.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Internal\CMakeCommonLinkerInformation.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Internal\CMakeDetermineLinkerId.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Internal\CMakeInspectCXXLinker.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Internal\FeatureTesting.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Linker\MSVC-CXX.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Linker\MSVC.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Linker\Windows-MSVC-CXX.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Linker\Windows-MSVC.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Windows-Determine-CXX.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Windows-Initialize.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Windows-MSVC-CXX.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Windows-MSVC.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Windows.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\WindowsPaths.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/simon/Desktop/DS_assignment/SC6103-DS/client/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"D:\Program File\CMake\bin\cmake.exe" -SC:/Users/simon/Desktop/DS_assignment/SC6103-DS/client -BC:/Users/simon/Desktop/DS_assignment/SC6103-DS/client/build --check-stamp-file C:/Users/simon/Desktop/DS_assignment/SC6103-DS/client/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\build\CMakeFiles\4.1.1\CMakeCXXCompiler.cmake;C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\build\CMakeFiles\4.1.1\CMakeRCCompiler.cmake;C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\build\CMakeFiles\4.1.1\CMakeSystem.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeCXXCompiler.cmake.in;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeCXXCompilerABI.cpp;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeCXXInformation.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeCommonLanguageInclude.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeCompilerIdDetection.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeDetermineCXXCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeDetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeDetermineCompilerABI.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeDetermineCompilerId.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeDetermineCompilerSupport.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeDetermineRCCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeFindBinUtils.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeGenericSystem.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeInitializeConfigs.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeLanguageInformation.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeParseImplicitIncludeInfo.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeParseImplicitLinkInfo.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeParseLibraryArchitecture.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeRCCompiler.cmake.in;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeRCInformation.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeSystemSpecificInformation.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeSystemSpecificInitialize.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeTestCXXCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeTestCompilerCommon.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeTestRCCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\ADSP-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\ARMCC-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\ARMClang-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\AppleClang-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Borland-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Clang-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Compaq-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Cray-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\CrayClang-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Diab-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Embarcadero-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Fujitsu-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\FujitsuClang-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\GHS-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\GNU-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\HP-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\IAR-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\IBMClang-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Intel-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\IntelLLVM-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\LCC-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\MSVC-CXX.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\MSVC-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\MSVC.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\NVHPC-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\NVIDIA-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\OpenWatcom-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\OrangeC-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\PGI-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\PathScale-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Renesas-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\SCO-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\SunPro-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\TI-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\TIClang-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Tasking-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\VisualAge-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Watcom-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\XL-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\XLClang-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\zOS-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CompilerId\VS-10.vcxproj.in;D:\Program File\CMake\share\cmake-4.1\Modules\Internal\CMakeCXXLinkerInformation.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Internal\CMakeCommonLinkerInformation.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Internal\CMakeDetermineLinkerId.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Internal\CMakeInspectCXXLinker.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Internal\FeatureTesting.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Linker\MSVC-CXX.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Linker\MSVC.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Linker\Windows-MSVC-CXX.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Linker\Windows-MSVC.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Windows-Determine-CXX.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Windows-Initialize.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Windows-MSVC-CXX.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Windows-MSVC.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Windows.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\WindowsPaths.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/simon/Desktop/DS_assignment/SC6103-DS/client/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"D:\Program File\CMake\bin\cmake.exe" -SC:/Users/simon/Desktop/DS_assignment/SC6103-DS/client -BC:/Users/simon/Desktop/DS_assignment/SC6103-DS/client/build --check-stamp-file C:/Users/simon/Desktop/DS_assignment/SC6103-DS/client/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\build\CMakeFiles\4.1.1\CMakeCXXCompiler.cmake;C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\build\CMakeFiles\4.1.1\CMakeRCCompiler.cmake;C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\build\CMakeFiles\4.1.1\CMakeSystem.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeCXXCompiler.cmake.in;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeCXXCompilerABI.cpp;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeCXXInformation.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeCommonLanguageInclude.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeCompilerIdDetection.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeDetermineCXXCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeDetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeDetermineCompilerABI.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeDetermineCompilerId.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeDetermineCompilerSupport.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeDetermineRCCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeFindBinUtils.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeGenericSystem.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeInitializeConfigs.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeLanguageInformation.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeParseImplicitIncludeInfo.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeParseImplicitLinkInfo.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeParseLibraryArchitecture.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeRCCompiler.cmake.in;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeRCInformation.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeSystemSpecificInformation.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeSystemSpecificInitialize.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeTestCXXCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeTestCompilerCommon.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CMakeTestRCCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\ADSP-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\ARMCC-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\ARMClang-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\AppleClang-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Borland-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Clang-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Compaq-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Cray-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\CrayClang-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Diab-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Embarcadero-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Fujitsu-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\FujitsuClang-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\GHS-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\GNU-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\HP-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\IAR-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\IBMClang-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Intel-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\IntelLLVM-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\LCC-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\MSVC-CXX.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\MSVC-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\MSVC.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\NVHPC-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\NVIDIA-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\OpenWatcom-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\OrangeC-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\PGI-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\PathScale-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Renesas-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\SCO-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\SunPro-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\TI-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\TIClang-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Tasking-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\VisualAge-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\Watcom-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\XL-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\XLClang-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Compiler\zOS-CXX-DetermineCompiler.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\CompilerId\VS-10.vcxproj.in;D:\Program File\CMake\share\cmake-4.1\Modules\Internal\CMakeCXXLinkerInformation.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Internal\CMakeCommonLinkerInformation.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Internal\CMakeDetermineLinkerId.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Internal\CMakeInspectCXXLinker.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Internal\FeatureTesting.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Linker\MSVC-CXX.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Linker\MSVC.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Linker\Windows-MSVC-CXX.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Linker\Windows-MSVC.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Windows-Determine-CXX.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Windows-Initialize.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Windows-MSVC-CXX.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Windows-MSVC.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\Windows.cmake;D:\Program File\CMake\share\cmake-4.1\Modules\Platform\WindowsPaths.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\src\main.cpp" />
+    <ClCompile Include="C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\src\udp_client.cpp" />
+    <ClCompile Include="C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\src\protocol.cpp" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\simon\Desktop\DS_assignment\SC6103-DS\client\build\ZERO_CHECK.vcxproj">
+      <Project>{C936CB6B-FF79-32B8-BAF6-110C5F1FD229}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
