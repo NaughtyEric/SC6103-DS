@@ -302,10 +302,14 @@ public class ServerUdpThread extends Thread {
             int appointmentId = buffer.getInt();
 
             var handle = appointmentManager.getHandle(clientInfo);
-            boolean success = handle.checkIn(appointmentId);
+            int result = handle.checkIn(appointmentId);
 
-            if (success) {
+            if (result == 0) {
                 return createSuccessResponse(requestId, "Check-in successful");
+            } else if (result == 1) {
+                return createErrorResponse(2, "Check-in failed - already checked in");
+            } else if (result == 2) {
+                return createErrorResponse(2, "Check-in failed - timeout");
             } else {
                 return createErrorResponse(2, "Check-in failed - not found or not authorized");
             }

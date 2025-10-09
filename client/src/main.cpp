@@ -50,8 +50,13 @@ static bool doQuery(UdpClient& cli, Semantics sem) {
     std::printf("Enter days (1-7 for Mon-Sun, space separated, 0 to finish): ");
     std::vector<uint32_t> days;
     int day;
-    while (std::cin >> day && day != 0) {
-        if (day >= 1 && day <= 7) days.push_back(static_cast<uint32_t>(day));
+    while (std::cin >> day) {
+        if (day == 0) break; // 0 means finish
+        if (day >= 1 && day <= 7) {
+            days.push_back(static_cast<uint32_t>(day));
+        } else {
+            std::printf("Invalid day %d, please enter 1-7 or 0 to finish\n", day);
+        }
     }
     
     if (days.empty()) {

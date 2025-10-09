@@ -19,4 +19,21 @@ public class ClientInfo {
         return port;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        ClientInfo that = (ClientInfo) obj;
+        return port == that.port && ip.equals(that.ip);
+    }
+
+    @Override
+    public int hashCode() {
+        return ip.hashCode() * 31 + port;
+    }
+
+    @Override
+    public String toString() {
+        return ip.getHostAddress() + ":" + port;
+    }
 }
