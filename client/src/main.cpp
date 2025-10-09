@@ -26,7 +26,10 @@ static uint32_t nextRequestId() { return g_requestSeq++; }
 static bool sendAndPrint(UdpClient& cli, OpCode op, const std::vector<uint8_t>& payload, Semantics sem) {
     auto req = buildRequest(nextRequestId(), op, sem, payload);
     std::vector<uint8_t> reply;
-    if (!cli.sendRequestAwaitReply(req, reply, true)) {
+    // 在 Book/CheckIn 下，无论 ALO 还是 AMO，都丢弃首次回复一次以触发重发。
+    // 区别由服务端决定：ALO 可能重复执行产生非幂等错误；AMO 命中缓存返回首次结果。
+    bool dropFirst = (op == OpCode::Book || op == OpCode::CheckIn);
+    if (!cli.sendRequestAwaitReply(req, reply, true, dropFirst)) {
         std::puts("No reply.");
         return false;
     }

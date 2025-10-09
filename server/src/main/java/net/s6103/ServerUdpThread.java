@@ -11,6 +11,8 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ServerUdpThread extends Thread {
     static final int BUFFER_SIZE = 4096;
@@ -22,6 +24,10 @@ public class ServerUdpThread extends Thread {
     private final ExecutorService executor;
     private static final int THREAD_MAXIMUM = 10;
     private final AppointmentManager appointmentManager;
+    // Cache for At-Most-Once semantics: (client, requestId) -> response bytes
+    private final Map<RequestKey, CachedResponse> responseCache = new ConcurrentHashMap<>();
+    // Cache retention (milliseconds)
+    private static final long CACHE_TTL_MS = 60_000; // keep for 60 seconds
 
     public ServerUdpThread(int port) {
         this.port = port;
@@ -111,8 +117,20 @@ public class ServerUdpThread extends Thread {
             ClientInfo clientInfo = new ClientInfo(clientAddress, clientPort);
             manager.addClient(clientInfo);
 
+            // At-Most-Once duplicate filtering using cache
+            RequestKey key = new RequestKey(clientInfo, requestId);
+            long now = System.currentTimeMillis();
+            if (semantics == 1) { // AtMostOnce
+                CachedResponse cached = responseCache.get(key);
+                if (cached != null && (now - cached.timestampMs) <= CACHE_TTL_MS) {
+                    System.out.println("Cache hit for requestId=" + requestId + " from " + clientInfo);
+                    return cached.responseBytes;
+                }
+                // else miss/expired: process, then cache below
+            }
+
             // Handle different types of requests
-            return switch (opCode) {
+            byte[] response = switch (opCode) {
                 case 1 -> // QueryAvailability
                         handleQueryAvailability(buffer, payloadLen, requestId);
                 case 2 -> // Book
@@ -127,9 +145,25 @@ public class ServerUdpThread extends Thread {
                         handleCheckIn(buffer, payloadLen, requestId, clientInfo);
                 default -> createErrorResponse(3, "Unknown operation");
             };
+            // Store in cache only for At-Most-Once semantics
+            if (semantics == 1 && response != null) {
+                responseCache.put(key, new CachedResponse(response, now));
+                // Opportunistic cleanup of expired entries
+                cleanupCache(now);
+            }
+            return response;
         } catch (Exception e) {
             System.err.println("Error parsing request: " + e.getMessage());
             return createErrorResponse(4, "Server error");
+        }
+    }
+
+    private void cleanupCache(long nowMs) {
+        // Simple linear cleanup; acceptable for assignment-scale loads
+        for (Map.Entry<RequestKey, CachedResponse> entry : responseCache.entrySet()) {
+            if (nowMs - entry.getValue().timestampMs > CACHE_TTL_MS) {
+                responseCache.remove(entry.getKey());
+            }
         }
     }
 
@@ -358,6 +392,41 @@ public class ServerUdpThread extends Thread {
             System.err.println("Error creating response: " + e.getMessage());
             e.printStackTrace();
             return null;
+        }
+    }
+
+    // RequestKey identifies a unique request from a client
+    private static final class RequestKey {
+        private final ClientInfo client;
+        private final int requestId;
+        private final int hash;
+
+        RequestKey(ClientInfo client, int requestId) {
+            this.client = client;
+            this.requestId = requestId;
+            this.hash = client.hashCode() * 31 + requestId;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            RequestKey that = (RequestKey) o;
+            return requestId == that.requestId && client.equals(that.client);
+        }
+
+        @Override
+        public int hashCode() {
+            return hash;
+        }
+    }
+
+    private static final class CachedResponse {
+        final byte[] responseBytes;
+        final long timestampMs;
+        CachedResponse(byte[] responseBytes, long timestampMs) {
+            this.responseBytes = responseBytes;
+            this.timestampMs = timestampMs;
         }
     }
 }
