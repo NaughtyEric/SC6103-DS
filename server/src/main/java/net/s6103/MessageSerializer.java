@@ -247,7 +247,8 @@ public class MessageSerializer {
         int messageLen = buffer.getInt();
         
         if (buffer.remaining() < messageLen) {
-            throw new SerializationException("Insufficient data for message");
+            throw new SerializationException("Inconsistent message length: " + messageLen + " expected, "
+                    + buffer.remaining() + " available");
         }
         
         byte[] messageBytes = new byte[messageLen];
