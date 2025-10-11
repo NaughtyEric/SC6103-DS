@@ -1,17 +1,56 @@
 package net.s6103;
 
-//TIP 要<b>运行</b>代码，请按 <shortcut actionId="Run"/> 或
-// 点击装订区域中的 <icon src="AllIcons.Actions.Execute"/> 图标。
-public class Main {
-    public static void main(String[] args) {
-        //TIP 当文本光标位于高亮显示的文本处时按 <shortcut actionId="ShowIntentionActions"/>
-        // 查看 IntelliJ IDEA 建议如何修正。
-        System.out.print("Hello and welcome!");
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP 按 <shortcut actionId="Debug"/> 开始调试代码。我们已经设置了一个 <icon src="AllIcons.Debugger.Db_set_breakpoint"/> 断点
-            // 但您始终可以通过按 <shortcut actionId="ToggleLineBreakpoint"/> 添加更多断点。
-            System.out.println("i = " + i);
+/**
+ * 主程序入口
+ * 启动重构后的UDP服务器
+ */
+public class Main {
+    
+    private static final Logger logger = Logger.getLogger(Main.class.getName());
+    
+    public static void main(String[] args) {
+        // 配置日志级别
+        Logger.getLogger("net.s6103").setLevel(Level.INFO);
+        
+        int port = 9000; // 默认端口
+        if (args.length > 0) {
+            try {
+                port = Integer.parseInt(args[0]);
+                if (port < 1 || port > 65535) {
+                    throw new IllegalArgumentException("Port must be between 1 and 65535");
+                }
+            } catch (NumberFormatException e) {
+                logger.severe("Invalid port number: " + args[0] + ", using default 9000");
+                port = 9000;
+            }
         }
+        
+        logger.info("Starting UDP Server on port " + port);
+        
+        ServerUdpThread server = new ServerUdpThread(port);
+        server.start();
+        
+        // 添加关闭钩子
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            logger.info("Shutting down server...");
+            server.stopServer();
+            try {
+                server.join(5000); // 等待最多5秒
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }));
+        
+        try {
+            server.join();
+        } catch (InterruptedException e) {
+            logger.info("Server interrupted");
+            Thread.currentThread().interrupt();
+        }
+        
+        logger.info("Server stopped");
     }
 }
