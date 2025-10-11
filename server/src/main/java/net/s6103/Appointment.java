@@ -24,20 +24,16 @@ public class Appointment {
     public final int getAppointmentId() { return appointmentId; }
     public final Instant getBeginTime() { return beginTime; }
     public final Instant getEndTime() { return beginTime.plusSeconds(lastingSeconds); }
-    public final String getFacility() { return facilityName; }
+    public final String getFacilityName() { return facilityName; }
     public final int getLastingSeconds() { return lastingSeconds; }
     public final ArrayList<Instant> getCheckInRecords() { return checkInRecords; }
 
     /**
      * Shift the appointment `second` seconds later.
-     * @param seconds the time to Shift. Negative if shifted advance.
+     * @param offsetMinutes the time to Shift. Negative if shifted advance.
      */
-    public void delay(int seconds) {
-        beginTime = beginTime.plusSeconds(seconds);
-    }
-
-    public final String getFacilityName() {
-        return facilityName;
+    public void delay(int offsetMinutes) {
+        beginTime = beginTime.plusSeconds(offsetMinutes * 60L);
     }
 
     public final void checkIn(Instant time) {
