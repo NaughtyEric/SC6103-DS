@@ -187,6 +187,7 @@ int main(int argc, char** argv) {
     std::string ip = argv[1];
     uint16_t port = static_cast<uint16_t>(std::atoi(argv[2]));
     Semantics sem = parseSemantics(argv[3]);
+    Semantics fixedAmo = parseSemantics("amo"); // For non-idempotent ops
     double loss = (argc >= 5) ? std::atof(argv[4]) : 0.0;
     uint32_t timeoutMs = (argc >= 6) ? static_cast<uint32_t>(std::atoi(argv[5])) : 800;
     uint32_t retries = (argc >= 7) ? static_cast<uint32_t>(std::atoi(argv[6])) : 2;
@@ -219,16 +220,16 @@ int main(int argc, char** argv) {
                 doBook(client, sem);
                 break;
             case 3:
-                doChange(client, sem);
+                doChange(client, fixedAmo);
                 break;
             case 4:
-                doMonitor(client, sem);
+                doMonitor(client, fixedAmo);
                 break;
             case 5:
                 doCancel(client, sem);
                 break;
             case 6:
-                doCheckIn(client, sem);
+                doCheckIn(client, fixedAmo);
                 break;
             default:
                 std::puts("Invalid choice.");
