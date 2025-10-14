@@ -1,0 +1,10 @@
+^C:\USERS\SIMON\DESKTOP\DS_ASSIGNMENT\SC6103-DS\CLIENT\CMAKELISTS.TXT
+setlocal
+"D:\Program File\CMake\bin\cmake.exe" -SC:/Users/simon/Desktop/DS_assignment/SC6103-DS/client -BC:/Users/simon/Desktop/DS_assignment/SC6103-DS/client/build --check-stamp-file C:/Users/simon/Desktop/DS_assignment/SC6103-DS/client/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

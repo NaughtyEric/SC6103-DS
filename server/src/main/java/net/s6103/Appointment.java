@@ -9,7 +9,8 @@ public class Appointment {
     private final String facilityName;
     private Instant beginTime;
     private final int lastingSeconds;
-    private final ArrayList<Instant> checkInRecords;
+    private boolean checkedIn = false;
+    private Instant checkInTime;
 
     public Appointment(ClientInfo clientInfo, int appointmentId, String facilityName, Instant beginTime, int lastingSeconds) {
         this.clientInfo = clientInfo;
@@ -17,7 +18,6 @@ public class Appointment {
         this.facilityName = facilityName;
         this.beginTime = beginTime;
         this.lastingSeconds = lastingSeconds;
-        this.checkInRecords = new ArrayList<>();
     }
 
     public final ClientInfo getClientInfo() { return clientInfo; }
@@ -26,7 +26,8 @@ public class Appointment {
     public final Instant getEndTime() { return beginTime.plusSeconds(lastingSeconds); }
     public final String getFacilityName() { return facilityName; }
     public final int getLastingSeconds() { return lastingSeconds; }
-    public final ArrayList<Instant> getCheckInRecords() { return checkInRecords; }
+    public final boolean isCheckedIn() { return checkedIn; }
+    public final Instant getCheckInTime() { return checkInTime; }
 
     /**
      * Shift the appointment `second` seconds later.
@@ -37,6 +38,9 @@ public class Appointment {
     }
 
     public final void checkIn(Instant time) {
-        checkInRecords.add(time);
+        if (!checkedIn) {
+            checkedIn = true;
+            checkInTime = time;
+        }
     }
 }

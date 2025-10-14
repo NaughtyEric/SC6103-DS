@@ -24,7 +24,8 @@ public:
     // Send request and wait for reply with retries, return true if got reply.
     bool sendRequestAwaitReply(const std::vector<uint8_t>& request,
                                std::vector<uint8_t>& replyOut,
-                               bool verboseLog);
+                               bool verboseLog,
+                               bool dropFirstReplyOnce);
 
     // Bind and receive packets for durationSeconds; callback on each packet.
     // Returns number of packets received.

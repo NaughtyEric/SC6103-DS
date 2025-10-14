@@ -3,6 +3,15 @@ package net.s6103;
 import java.net.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
@@ -18,6 +27,10 @@ public class ServerUdpThread extends Thread {
     private final int port;
     private final ClientManager clientManager;
     private final AppointmentManager appointmentManager;
+    // Cache for At-Most-Once semantics: (client, requestId) -> response bytes
+    private final Map<RequestKey, CachedResponse> responseCache = new ConcurrentHashMap<>();
+    // Cache retention (milliseconds)
+    private static final long CACHE_TTL_MS = 60_000; // keep for 60 seconds
     private final BusinessLogicHandler businessHandler;
     private final RequestManager requestManager;
     private final ExecutorService executor;
@@ -73,47 +86,150 @@ public class ServerUdpThread extends Thread {
      */
     private void processRequestAsync(DatagramSocket socket, DatagramPacket packet) {
         try {
-            // 复制数据
-            byte[] data = new byte[packet.getLength()];
-            System.arraycopy(packet.getData(), 0, data, 0, packet.getLength());
-            
-            // 处理请求
-            byte[] response = processRequest(data, packet.getAddress(), packet.getPort());
-            
-            if (response != null) {
-                // 发送响应
-                DatagramPacket responsePacket = new DatagramPacket(
-                    response, response.length,
-                    packet.getAddress(), packet.getPort()
-                );
-                socket.send(responsePacket);
+            System.out.println("Received " + data.length + " bytes from " + clientAddress + ":" + clientPort);
+            if (data.length < 24) { // Minimum message header length
+                System.err.println("Message too short: " + data.length + " bytes");
+                return createErrorResponse(4, "Invalid message format");
             }
-            
+
+            ByteBuffer buffer = ByteBuffer.wrap(data);
+            buffer.order(ByteOrder.BIG_ENDIAN);
+
+            // Parse message header
+            int magic = buffer.getInt();
+            int version = buffer.getInt();
+            int requestId = buffer.getInt();
+            int opCode = buffer.getInt();
+            int timestamp = buffer.getInt();
+            int semantics = buffer.getInt();
+            int payloadLen = buffer.getInt();
+
+            System.out.println("Parsed header: magic=0x" + Integer.toHexString(magic) + 
+                             ", version=" + version + ", requestId=" + requestId + 
+                             ", opCode=" + opCode + ", payloadLen=" + payloadLen);
+
+            // Validate magic number and version
+            if (magic != MAGIC) {
+                System.err.println("Invalid magic: expected 0x" + Integer.toHexString(MAGIC) + 
+                                 ", got 0x" + Integer.toHexString(magic));
+                return createErrorResponse(4, "Invalid magic number");
+            }
+            if (version != VERSION) {
+                System.err.println("Invalid version: expected " + VERSION + ", got " + version);
+                return createErrorResponse(4, "Unsupported version");
+            }
+
+            // Create client info
+            ClientInfo clientInfo = new ClientInfo(clientAddress, clientPort);
+            manager.addClient(clientInfo);
+
+            // At-Most-Once duplicate filtering using cache
+            RequestKey key = new RequestKey(clientInfo, requestId);
+            long now = System.currentTimeMillis();
+            if (semantics == 1) { // AtMostOnce
+                CachedResponse cached = responseCache.get(key);
+                if (cached != null && (now - cached.timestampMs) <= CACHE_TTL_MS) {
+                    System.out.println("Cache hit for requestId=" + requestId + " from " + clientInfo);
+                    return cached.responseBytes;
+                }
+                // else miss/expired: process, then cache below
+            }
+
+            // Handle different types of requests
+            byte[] response = switch (opCode) {
+                case 1 -> // QueryAvailability
+                        handleQueryAvailability(buffer, payloadLen, requestId);
+                case 2 -> // Book
+                        handleBook(buffer, payloadLen, requestId, clientInfo);
+                case 3 -> // Change
+                        handleChange(buffer, payloadLen, requestId, clientInfo);
+                case 4 -> // Monitor
+                        handleMonitor(buffer, payloadLen, requestId, clientInfo);
+                case 5 -> // Cancel
+                        handleCancel(buffer, payloadLen, requestId, clientInfo);
+                case 6 -> // CheckIn
+                        handleCheckIn(buffer, payloadLen, requestId, clientInfo);
+                default -> createErrorResponse(3, "Unknown operation");
+            };
+            // Store in cache only for At-Most-Once semantics
+            if (semantics == 1 && response != null) {
+                responseCache.put(key, new CachedResponse(response, now));
+                // Opportunistic cleanup of expired entries
+                cleanupCache(now);
+            }
+            return response;
         } catch (Exception e) {
             logger.severe("Error processing request from " + packet.getAddress() + 
                          ":" + packet.getPort() + ": " + e.getMessage());
         }
     }
 
-    private byte[] processRequest(byte[] data, InetAddress clientAddress, int clientPort) {
+    private void cleanupCache(long nowMs) {
+        // Simple linear cleanup; acceptable for assignment-scale loads
+        for (Map.Entry<RequestKey, CachedResponse> entry : responseCache.entrySet()) {
+            if (nowMs - entry.getValue().timestampMs > CACHE_TTL_MS) {
+                responseCache.remove(entry.getKey());
+            }
+        }
+    }
+
+    private byte[] handleQueryAvailability(ByteBuffer buffer, int payloadLen, int requestId) {
         try {
-            // 解析请求消息
-            MessageSerializer.RequestMessage request = MessageSerializer.deserializeRequest(data);
-            
-            // 添加或更新客户端会话
-            ClientInfo clientInfo = clientManager.addOrUpdateClient(clientAddress, clientPort);
-            
-            // 使用请求管理器处理请求（支持去重和重试）
-            RequestManager.ProcessResult result = requestManager.processRequest(request, req -> {
-                return handleBusinessRequest(req, clientInfo);
-            });
-            
-            // 序列化响应
-            return MessageSerializer.serializeResponse(result.response);
-            
-        } catch (MessageSerializer.SerializationException e) {
-            logger.warning("Serialization error: " + e.getMessage());
-            return createErrorResponse(0, 4, "Invalid message format: " + e.getMessage());
+            System.out.println("handleQueryAvailability: payloadLen=" + payloadLen);
+            if (payloadLen < 4) {
+                return createErrorResponse(3, "Invalid payload");
+            }
+
+            // 读取设施名称
+            int facilityNameLen = buffer.getInt();
+            System.out.println("facilityNameLen=" + facilityNameLen);
+            if (facilityNameLen < 0 || facilityNameLen > payloadLen - 4) {
+                return createErrorResponse(3, "Invalid facility name length");
+            }
+
+            byte[] facilityNameBytes = new byte[facilityNameLen];
+            buffer.get(facilityNameBytes);
+            String facilityName = new String(facilityNameBytes, StandardCharsets.UTF_8);
+            System.out.println("facilityName='" + facilityName + "'");
+
+            // 读取查询天数
+            int dayCount = buffer.getInt();
+            System.out.println("dayCount=" + dayCount);
+            if (dayCount < 1 || dayCount > 7) {
+                System.err.println("Invalid day count: " + dayCount + " (expected 1-7)");
+                return createErrorResponse(3, "Invalid day count");
+            }
+
+            // 读取天数列表
+            List<Integer> days = new ArrayList<>();
+            for (int i = 0; i < dayCount; i++) {
+                days.add(buffer.getInt());
+            }
+
+            // Query availability
+            var handle = appointmentManager.getHandle(new ClientInfo(null, 0));
+            List<String> results = new ArrayList<>();
+
+            for (int day : days) {
+                LocalDate date = LocalDate.now().plusDays(day - 1);
+                Appointment[] appointments = handle.query(facilityName, date);
+
+                StringBuilder dayResult = new StringBuilder();
+                dayResult.append("Day ").append(day).append(": ");
+                if (appointments.length == 0) {
+                    dayResult.append("Available all day");
+                } else {
+                    dayResult.append("Booked: ");
+                    for (Appointment apt : appointments) {
+                        dayResult.append(apt.getBeginTime().toString()).append("-")
+                               .append(apt.getEndTime().toString()).append(" ");
+                    }
+                }
+                results.add(dayResult.toString());
+            }
+
+            return createSuccessResponse(requestId, String.join("; ", results));
+
         } catch (Exception e) {
             logger.severe("Error processing request: " + e.getMessage());
             return createErrorResponse(0, 4, "Server error: " + e.getMessage());
@@ -186,6 +302,69 @@ public class ServerUdpThread extends Thread {
         
         logger.info("Server shutdown completed");
     }
+
+    private byte[] handleCheckIn(ByteBuffer buffer, int payloadLen, int requestId, ClientInfo clientInfo) {
+        try {
+            int appointmentId = buffer.getInt();
+
+            var handle = appointmentManager.getHandle(clientInfo);
+            int result = handle.checkIn(appointmentId);
+
+            if (result == 0) {
+                return createSuccessResponse(requestId, "Check-in successful");
+            } else if (result == 1) {
+                return createErrorResponse(2, "Check-in failed - already checked in");
+            } else if (result == 2) {
+                return createErrorResponse(2, "Check-in failed - timeout");
+            } else {
+                return createErrorResponse(2, "Check-in failed - not found or not authorized");
+            }
+
+        } catch (Exception e) {
+            return createErrorResponse(4, "Check-in error: " + e.getMessage());
+        }
+    }
+
+    private byte[] createSuccessResponse(int requestId, String message) {
+        return createResponse(requestId, 0, message);
+    }
+
+    private byte[] createErrorResponse(int status, String message) {
+        return createResponse(0, status, message);
+    }
+
+    private byte[] createResponse(int requestId, int status, String message) {
+        try {
+            byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
+            int headerLen = 7 * 4; // 7 int fields * 4 bytes each = 28 bytes
+            int payloadLen = 4 + 4 + messageBytes.length; // status + messageLen + message
+            int totalLen = headerLen + payloadLen;
+
+            ByteBuffer buffer = ByteBuffer.allocate(totalLen);
+            buffer.order(ByteOrder.BIG_ENDIAN);
+
+            // Message header (7 int fields = 28 bytes)
+            buffer.putInt(MAGIC);
+            buffer.putInt(VERSION);
+            buffer.putInt(requestId);
+            buffer.putInt(0); // opCode (response)
+            buffer.putInt((int)(System.currentTimeMillis() / 1000)); // timestamp
+            buffer.putInt(0); // semantics
+            buffer.putInt(payloadLen); // payloadLen
+
+            // Status and message
+            buffer.putInt(status);
+            buffer.putInt(messageBytes.length);
+            buffer.put(messageBytes);
+
+            System.out.println("Created response: requestId=" + requestId + ", status=" + status + 
+                             ", message='" + message + "', totalLen=" + totalLen);
+            return buffer.array();
+        } catch (Exception e) {
+            System.err.println("Error creating response: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
     
     /**
      * 获取服务器状态
@@ -193,5 +372,40 @@ public class ServerUdpThread extends Thread {
     public String getStatus() {
         return String.format("Server running on port %d, active clients: %d", 
                            port, clientManager.getActiveClientCount());
+    }
+
+    // RequestKey identifies a unique request from a client
+    private static final class RequestKey {
+        private final ClientInfo client;
+        private final int requestId;
+        private final int hash;
+
+        RequestKey(ClientInfo client, int requestId) {
+            this.client = client;
+            this.requestId = requestId;
+            this.hash = client.hashCode() * 31 + requestId;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            RequestKey that = (RequestKey) o;
+            return requestId == that.requestId && client.equals(that.client);
+        }
+
+        @Override
+        public int hashCode() {
+            return hash;
+        }
+    }
+
+    private static final class CachedResponse {
+        final byte[] responseBytes;
+        final long timestampMs;
+        CachedResponse(byte[] responseBytes, long timestampMs) {
+            this.responseBytes = responseBytes;
+            this.timestampMs = timestampMs;
+        }
     }
 }
