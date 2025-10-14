@@ -15,7 +15,7 @@ public class MessageSerializer {
     // 协议常量
     public static final int MAGIC = 0x46424B31; // 'FBK1'
     public static final int VERSION = 1;
-    public static final int HEADER_SIZE = 24;
+    public static final int HEADER_SIZE = 28;
     
     // 操作码枚举
     public enum OpCode {
@@ -87,7 +87,7 @@ public class MessageSerializer {
             this.magic = MAGIC;
             this.version = VERSION;
             this.requestId = requestId;
-            this.opCode = opCode.getValue();
+            this.opCode = opCode != null ? opCode.getValue() : 0;
             this.timestamp = (int) (System.currentTimeMillis() / 1000);
             this.semantics = semantics.getValue();
             this.payloadLen = payloadLen;

@@ -119,7 +119,7 @@ class ServerIntegrationTest {
         // 创建查询请求
         ByteBuffer buffer = ByteBuffer.allocate(1024);
         buffer.order(ByteOrder.BIG_ENDIAN);
-        MessageSerializer.serializeString(buffer, "Room101");
+        MessageSerializer.serializeString(buffer, "Tennis Court 1");
         buffer.putInt(2); // 查询2天
         buffer.putInt(1); // 星期一
         buffer.putInt(2); // 星期二
@@ -150,7 +150,7 @@ class ServerIntegrationTest {
         // 创建测试请求
         ByteBuffer buffer = ByteBuffer.allocate(1024);
         buffer.order(ByteOrder.BIG_ENDIAN);
-        MessageSerializer.serializeString(buffer, "Room101");
+        MessageSerializer.serializeString(buffer, "Tennis Court 1");
         buffer.putInt(1);
         buffer.putInt(1);
         
