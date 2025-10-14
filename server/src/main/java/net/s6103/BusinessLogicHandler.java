@@ -180,7 +180,7 @@ public class BusinessLogicHandler {
         }
         
         // 验证监控时长
-        if (durationSec <= 0 || durationSec > 3600) { // 最多1小时
+        if (durationSec <= 0 || durationSec > 60 * 60 * 24 * 7) {
             return createErrorResponse(request.header.requestId, 3, "Invalid duration: " + durationSec);
         }
         

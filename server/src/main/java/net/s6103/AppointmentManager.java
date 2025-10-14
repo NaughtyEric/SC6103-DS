@@ -206,7 +206,9 @@ public class AppointmentManager {
     }
 
     private void notifyClients(String facilityName, Instant beginTime, Instant endTime) {
+        Logger.getGlobal().info("Notifying facility " + facilityName + " from " + beginTime + " to " + endTime);
         for (var monitor : facilityMonitors.getOrDefault(facilityName, List.of())) {
+            Logger.getGlobal().info("Checking monitor for client " + monitor.getClient());
             if (monitor.isExpired()) {
                 continue;
             }
@@ -233,6 +235,8 @@ public class AppointmentManager {
                 } catch (Exception e) {
                     Logger.getGlobal().warning("Failed to notify client " + client + ": " + e.getMessage());
                 }
+            } else {
+                Logger.getGlobal().info("No relevant appointment for client " + monitor.getClient() + ", the time period is from " + monitor.getBeginInstant() + " to " + monitor.getBeginInstant().plus(monitor.getMonitorInterval()));
             }
         }
     }
