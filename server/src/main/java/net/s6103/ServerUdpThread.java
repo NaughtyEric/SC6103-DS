@@ -1,7 +1,6 @@
 package net.s6103;
 
 import java.net.*;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.nio.ByteBuffer;
@@ -13,72 +12,79 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
+/**
+ * 重构的UDP服务器线程
+ * 使用标准化的消息序列化和业务逻辑分离
+ */
 public class ServerUdpThread extends Thread {
-    static final int BUFFER_SIZE = 4096;
-    static final int MAGIC = 0x46424B31; // 'FBK1'
-    static final int VERSION = 1;
-
-    private final int port;
-    private final ClientManager manager;
-    private final ExecutorService executor;
+    
+    private static final Logger logger = Logger.getLogger(ServerUdpThread.class.getName());
+    private static final int BUFFER_SIZE = 4096;
     private static final int THREAD_MAXIMUM = 10;
+    
+    private final int port;
+    private final ClientManager clientManager;
     private final AppointmentManager appointmentManager;
     // Cache for At-Most-Once semantics: (client, requestId) -> response bytes
     private final Map<RequestKey, CachedResponse> responseCache = new ConcurrentHashMap<>();
     // Cache retention (milliseconds)
     private static final long CACHE_TTL_MS = 60_000; // keep for 60 seconds
+    private final BusinessLogicHandler businessHandler;
+    private final RequestManager requestManager;
+    private final ExecutorService executor;
+    
+    private volatile boolean running = true;
 
     public ServerUdpThread(int port) {
         this.port = port;
-        this.manager = new ClientManager();
-        this.executor = Executors.newFixedThreadPool(THREAD_MAXIMUM);
+        this.clientManager = new ClientManager();
         this.appointmentManager = new AppointmentManager();
+        this.businessHandler = new BusinessLogicHandler(appointmentManager, clientManager);
+        this.requestManager = new RequestManager();
+        this.executor = Executors.newFixedThreadPool(THREAD_MAXIMUM);
     }
 
-    public ServerUdpThread(int port, ClientManager manager) {
+    public ServerUdpThread(int port, ClientManager clientManager) {
         this.port = port;
-        this.manager = manager;
-        this.executor = Executors.newFixedThreadPool(THREAD_MAXIMUM);
+        this.clientManager = clientManager;
         this.appointmentManager = new AppointmentManager();
+        this.businessHandler = new BusinessLogicHandler(appointmentManager, clientManager);
+        this.requestManager = new RequestManager();
+        this.executor = Executors.newFixedThreadPool(THREAD_MAXIMUM);
     }
 
     @Override
     public void run() {
         try (DatagramSocket socket = new DatagramSocket(port)) {
-            byte[] buffer = new byte[BUFFER_SIZE];
-            System.out.println("UDP Server started on port " + port);
-
-            while (true) {
+            logger.info("UDP Server started on port " + port);
+            
+            while (running) {
                 try {
-                    DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+                    DatagramPacket packet = new DatagramPacket(new byte[BUFFER_SIZE], BUFFER_SIZE);
                     socket.receive(packet);
 
-                    // Process received data packet
-                    byte[] data = new byte[packet.getLength()];
-                    System.arraycopy(packet.getData(), 0, data, 0, packet.getLength());
-
-                    // Parse request and generate response
-                    byte[] response = processRequest(data, packet.getAddress(), packet.getPort());
-
-                    if (response != null) {
-                        DatagramPacket responsePacket = new DatagramPacket(
-                            response, response.length,
-                            packet.getAddress(), packet.getPort()
-                        );
-                        socket.send(responsePacket);
-                    }
+                    // 异步处理请求
+                    executor.submit(() -> processRequestAsync(socket, packet));
+                    
                 } catch (Exception e) {
-                    System.err.println("Error processing request: " + e.getMessage());
-                    e.printStackTrace();
+                    if (running) {
+                        logger.severe("Error receiving packet: " + e.getMessage());
+                    }
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.severe("Failed to start UDP server: " + e.getMessage());
+        } finally {
+            shutdown();
         }
     }
-
-    private byte[] processRequest(byte[] data, InetAddress clientAddress, int clientPort) {
+    
+    /**
+     * 异步处理请求
+     */
+    private void processRequestAsync(DatagramSocket socket, DatagramPacket packet) {
         try {
             System.out.println("Received " + data.length + " bytes from " + clientAddress + ":" + clientPort);
             if (data.length < 24) { // Minimum message header length
@@ -153,8 +159,8 @@ public class ServerUdpThread extends Thread {
             }
             return response;
         } catch (Exception e) {
-            System.err.println("Error parsing request: " + e.getMessage());
-            return createErrorResponse(4, "Server error");
+            logger.severe("Error processing request from " + packet.getAddress() + 
+                         ":" + packet.getPort() + ": " + e.getMessage());
         }
     }
 
@@ -225,110 +231,76 @@ public class ServerUdpThread extends Thread {
             return createSuccessResponse(requestId, String.join("; ", results));
 
         } catch (Exception e) {
-            return createErrorResponse(4, "Query error: " + e.getMessage());
+            logger.severe("Error processing request: " + e.getMessage());
+            return createErrorResponse(0, 4, "Server error: " + e.getMessage());
         }
     }
-
-    private byte[] handleBook(ByteBuffer buffer, int payloadLen, int requestId, ClientInfo clientInfo) {
-        try {
-            // 解析预订参数
-            int facilityNameLen = buffer.getInt();
-            byte[] facilityNameBytes = new byte[facilityNameLen];
-            buffer.get(facilityNameBytes);
-            String facilityName = new String(facilityNameBytes, StandardCharsets.UTF_8);
-
-            int startDay = buffer.getInt();
-            int startHour = buffer.getInt();
-            int startMin = buffer.getInt();
-            int endDay = buffer.getInt();
-            int endHour = buffer.getInt();
-            int endMin = buffer.getInt();
-
-            // 计算时间
-            LocalDate startDate = LocalDate.now().plusDays(startDay - 1);
-            Instant startTime = startDate.atTime(startHour, startMin).toInstant(ZoneOffset.UTC);
-            LocalDate endDate = LocalDate.now().plusDays(endDay - 1);
-            Instant endTime = endDate.atTime(endHour, endMin).toInstant(ZoneOffset.UTC);
-
-            // 执行预订
-            var handle = appointmentManager.getHandle(clientInfo);
-            int appointmentId = handle.book(facilityName, startTime, endTime);
-
-            if (appointmentId > 0) {
-                return createSuccessResponse(requestId, "Booking successful, ID: " + appointmentId);
-            } else {
-                return createErrorResponse(2, "Booking failed - time conflict");
+    
+    /**
+     * 处理业务请求
+     */
+    private MessageSerializer.ResponseMessage handleBusinessRequest(MessageSerializer.RequestMessage request, 
+                                                                   ClientInfo clientInfo) throws Exception {
+        
+        MessageSerializer.OpCode opCode = MessageSerializer.OpCode.fromValue(request.header.opCode);
+        
+        return switch (opCode) {
+            case QUERY_AVAILABILITY -> businessHandler.handleQueryAvailability(request);
+            case BOOK -> businessHandler.handleBook(request, clientInfo);
+            case CHANGE -> businessHandler.handleChange(request, clientInfo);
+            case MONITOR -> businessHandler.handleMonitor(request, clientInfo);
+            case CANCEL -> businessHandler.handleCancel(request, clientInfo);
+            case CHECK_IN -> businessHandler.handleCheckIn(request, clientInfo);
+            default -> {
+                logger.warning("Unknown operation: " + request.header.opCode);
+                MessageSerializer.MessageHeader header = new MessageSerializer.MessageHeader(
+                    request.header.requestId, null, MessageSerializer.Semantics.AT_LEAST_ONCE, 0);
+                yield new MessageSerializer.ResponseMessage(header, 3, "Unknown operation", null);
             }
-
-        } catch (Exception e) {
-            return createErrorResponse(4, "Booking error: " + e.getMessage());
-        }
+        };
     }
 
-    private byte[] handleChange(ByteBuffer buffer, int payloadLen, int requestId, ClientInfo clientInfo) {
+    /**
+     * 创建错误响应
+     */
+    private byte[] createErrorResponse(int requestId, int status, String message) {
+        MessageSerializer.MessageHeader header = new MessageSerializer.MessageHeader(
+            requestId, null, MessageSerializer.Semantics.AT_LEAST_ONCE, 0);
+        MessageSerializer.ResponseMessage response = new MessageSerializer.ResponseMessage(
+            header, status, message, null);
+        return MessageSerializer.serializeResponse(response);
+    }
+    
+    /**
+     * 停止服务器
+     */
+    public void stopServer() {
+        running = false;
+        interrupt();
+    }
+    
+    /**
+     * 关闭服务器
+     */
+    public void shutdown() {
+        running = false;
+        
+        // 关闭线程池
+        executor.shutdown();
         try {
-            // 解析修改参数
-            int confirmIdLen = buffer.getInt();
-            byte[] confirmIdBytes = new byte[confirmIdLen];
-            buffer.get(confirmIdBytes);
-            String confirmId = new String(confirmIdBytes, StandardCharsets.UTF_8);
-
-            int offsetMin = buffer.getInt();
-
-            // 执行修改
-            var handle = appointmentManager.getHandle(clientInfo);
-            int appointmentId = Integer.parseInt(confirmId);
-            boolean success = handle.change(appointmentId, offsetMin);
-
-            if (success) {
-                return createSuccessResponse(requestId, "Change successful");
-            } else {
-                return createErrorResponse(2, "Change failed - conflict or not found");
+            if (!executor.awaitTermination(5, java.util.concurrent.TimeUnit.SECONDS)) {
+                executor.shutdownNow();
             }
-
-        } catch (Exception e) {
-            return createErrorResponse(4, "Change error: " + e.getMessage());
+        } catch (InterruptedException e) {
+            executor.shutdownNow();
+            Thread.currentThread().interrupt();
         }
-    }
-
-    private byte[] handleMonitor(ByteBuffer buffer, int payloadLen, int requestId, ClientInfo clientInfo) {
-        try {
-            // 解析监控参数
-            int facilityNameLen = buffer.getInt();
-            byte[] facilityNameBytes = new byte[facilityNameLen];
-            buffer.get(facilityNameBytes);
-            String facilityName = new String(facilityNameBytes, StandardCharsets.UTF_8);
-
-            int durationSec = buffer.getInt();
-            int clientPort = buffer.getInt();
-
-            // Start monitoring
-            var handle = appointmentManager.getHandle(clientInfo);
-            handle.monitor(facilityName, java.time.Duration.ofSeconds(durationSec));
-
-            return createSuccessResponse(requestId, "Monitoring started");
-
-        } catch (Exception e) {
-            return createErrorResponse(4, "Monitor error: " + e.getMessage());
-        }
-    }
-
-    private byte[] handleCancel(ByteBuffer buffer, int payloadLen, int requestId, ClientInfo clientInfo) {
-        try {
-            int appointmentId = buffer.getInt();
-
-            var handle = appointmentManager.getHandle(clientInfo);
-            boolean success = handle.cancel(appointmentId);
-
-            if (success) {
-                return createSuccessResponse(requestId, "Cancellation successful");
-            } else {
-                return createErrorResponse(2, "Cancellation failed - not found or not authorized");
-            }
-
-        } catch (Exception e) {
-            return createErrorResponse(4, "Cancel error: " + e.getMessage());
-        }
+        
+        // 关闭管理器
+        clientManager.shutdown();
+        requestManager.shutdown();
+        
+        logger.info("Server shutdown completed");
     }
 
     private byte[] handleCheckIn(ByteBuffer buffer, int payloadLen, int requestId, ClientInfo clientInfo) {
@@ -393,6 +365,13 @@ public class ServerUdpThread extends Thread {
             e.printStackTrace();
             return null;
         }
+    
+    /**
+     * 获取服务器状态
+     */
+    public String getStatus() {
+        return String.format("Server running on port %d, active clients: %d", 
+                           port, clientManager.getActiveClientCount());
     }
 
     // RequestKey identifies a unique request from a client

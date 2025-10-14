@@ -4,9 +4,11 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <ios>
 #include <string>
 #include <vector>
 #include <iostream>
+#include <windows.h>
 
 using namespace fbk;
 
@@ -17,6 +19,10 @@ static void printUsage() {
 static Semantics parseSemantics(const std::string& s) {
     if (s == "amo") return Semantics::AtMostOnce;
     return Semantics::AtLeastOnce;
+}
+
+static Semantics fixedAmoSemantics() {
+    return Semantics::AtMostOnce;
 }
 
 static uint32_t g_requestSeq = 1;
@@ -219,16 +225,16 @@ int main(int argc, char** argv) {
                 doBook(client, sem);
                 break;
             case 3:
-                doChange(client, sem);
+                doChange(client, fixedAmoSemantics());
                 break;
             case 4:
-                doMonitor(client, sem);
+                doMonitor(client, fixedAmoSemantics());
                 break;
             case 5:
                 doCancel(client, sem);
                 break;
             case 6:
-                doCheckIn(client, sem);
+                doCheckIn(client, fixedAmoSemantics());
                 break;
             default:
                 std::puts("Invalid choice.");
