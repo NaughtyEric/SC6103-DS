@@ -28,5 +28,11 @@ public class Monitor {
     public ClientInfo getClient() {
         return client;
     }
+    public Instant getBeginInstant() {
+        return beginInstant;
+    }
+    public Duration getMonitorInterval() {
+        return monitorInterval;
+    }
 }
 

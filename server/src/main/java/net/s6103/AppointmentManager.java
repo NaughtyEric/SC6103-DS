@@ -1,5 +1,7 @@
 package net.s6103;
 
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -16,7 +18,7 @@ public class AppointmentManager {
     // mapping from facility name to list of monitors
     private final Map<String, List<Monitor>> facilityMonitors = new ConcurrentHashMap<>();
     // scheduler for monitor notifications
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
     static private int nextAppointmentId = 1;
     // lock for appointments
     private final ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock();
@@ -162,8 +164,6 @@ public class AppointmentManager {
                     .computeIfAbsent(facilityName, _ -> new CopyOnWriteArrayList<>())
                     .add(monitor);
             Logger.getGlobal().info(clientInfo + " starts monitoring " + facilityName + " for " + monitorInterval.toMinutes() + " minutes.");
-            _manager.facilityMonitors.get(facilityName).removeIf(m -> m.getClient().equals(clientInfo));
-            Logger.getGlobal().info("Monitor expired for client " + clientInfo + " on facility " + facilityName);
         }
 
         public boolean checkIn(int appointmentId) {
@@ -199,6 +199,38 @@ public class AppointmentManager {
     private void cleanupExpiredMonitors() {
         for (var entry : facilityMonitors.entrySet()) {
             entry.getValue().removeIf(Monitor::isExpired);
+        }
+    }
+
+    private void notifyClients(String facilityName, Instant beginTime, Instant endTime) {
+        for (var monitor : facilityMonitors.getOrDefault(facilityName, List.of())) {
+            if (monitor.isExpired()) {
+                continue;
+            }
+            if (beginTime.isBefore(monitor.getBeginInstant().plus(monitor.getMonitorInterval()))
+                    && endTime.isAfter(monitor.getBeginInstant())) {
+                Logger.getGlobal().info("Notifying client " + monitor.getClient() + " about new appointment in " + facilityName);
+                ClientInfo client = monitor.getClient();
+                try (DatagramSocket socket = new DatagramSocket()) {
+                    InetAddress address = client.getIp();
+                    int port = client.getPort();
+                    MessageSerializer.MessageHeader header = new MessageSerializer.MessageHeader(
+                            0, MessageSerializer.OpCode.MONITOR, MessageSerializer.Semantics.AT_LEAST_ONCE, 0
+                    );
+                    String message = String.format("New appointment in %s from %s to %s",
+                            facilityName, beginTime.toString(), endTime.toString());
+                    byte[] data = MessageSerializer.serializeResponse(
+                            new MessageSerializer.ResponseMessage(header, 0, message, null)
+                    );
+                    var packet = new java.net.DatagramPacket(data, data.length, address, port);
+                    socket.send(packet);
+
+                    Logger.getGlobal().info("Monitor notification sent to " + client);
+
+                } catch (Exception e) {
+                    Logger.getGlobal().warning("Failed to notify client " + client + ": " + e.getMessage());
+                }
+            }
         }
     }
 }

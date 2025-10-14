@@ -54,7 +54,6 @@ public class ServerUdpThread extends Thread {
 
                     // 异步处理请求
                     executor.submit(() -> processRequestAsync(socket, packet));
-                    
                 } catch (Exception e) {
                     if (running) {
                         logger.severe("Error receiving packet: " + e.getMessage());
