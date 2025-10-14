@@ -93,6 +93,7 @@ public class AppointmentManager {
                 Logger.getGlobal().info("Booking conflict for client " + clientInfo);
             } else {
                 Logger.getGlobal().info("Booking successful: " + id + " by " + clientInfo);
+                notifyClients(facilityName, start, end);
             }
             return id;
         }
@@ -124,6 +125,7 @@ public class AppointmentManager {
                         appointment.delay(offsetMinutes);
                         Logger.getGlobal().info("Appointment " + appointmentId + " changed by " + clientInfo);
                         result = true;
+                        notifyClients(appointment.getFacilityName(), newBeginTime, newEndTime);
                     } else {
                         Logger.getGlobal().info("Change conflict for appointment " + appointmentId + " by " + clientInfo);
                     }
@@ -147,6 +149,7 @@ public class AppointmentManager {
                     _manager.appointments.remove(appointmentId);
                     Logger.getGlobal().info("Appointment " + appointmentId + " cancelled by " + clientInfo);
                     result = true;
+                    notifyClients(appointment.getFacilityName(), appointment.getBeginTime(), appointment.getEndTime());
                 }
             } finally {
                 rwLock.writeLock().unlock();
@@ -218,7 +221,7 @@ public class AppointmentManager {
                             0, MessageSerializer.OpCode.MONITOR, MessageSerializer.Semantics.AT_LEAST_ONCE, 0
                     );
                     String message = String.format("New appointment in %s from %s to %s",
-                            facilityName, beginTime.toString(), endTime.toString());
+                            facilityName, beginTime, endTime);
                     byte[] data = MessageSerializer.serializeResponse(
                             new MessageSerializer.ResponseMessage(header, 0, message, null)
                     );
