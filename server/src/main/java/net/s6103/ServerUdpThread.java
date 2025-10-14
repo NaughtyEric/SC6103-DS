@@ -44,7 +44,7 @@ public class ServerUdpThread extends Thread {
 
     @Override
     public void run() {
-        try (DatagramSocket socket = new DatagramSocket(port)) {
+        try (DatagramSocket socket = new DatagramSocket(port, InetAddress.getByName("0.0.0.0"))) {
             logger.info("UDP Server started on port " + port);
             
             while (running) {
