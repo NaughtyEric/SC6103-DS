@@ -78,19 +78,18 @@ std::vector<uint8_t> buildRequest(uint32_t requestId,
                                   Semantics semantics,
                                   const std::vector<uint8_t>& payload) {
     std::vector<uint8_t> buf;
-    // header has 7 uint32 fields (28 bytes) + payload
-    buf.reserve(28 + payload.size());
+    buf.reserve(sizeof(MessageHeader) + payload.size());
 
-    // Write header fields individually in big-endian (network order), 32-bit each
-    appendUint32(buf, kMagic);
-    appendUint32(buf, kVersion);
-    appendUint32(buf, requestId);
-    appendUint32(buf, static_cast<uint32_t>(op)); // opCode as 32-bit
-    appendUint32(buf, static_cast<uint32_t>(time(nullptr))); // timestamp (seconds)
-    appendUint32(buf, static_cast<uint32_t>(semantics));
-    appendUint32(buf, static_cast<uint32_t>(payload.size()));
+    MessageHeader h{};
+    h.magic = hton32(kMagic);
+    h.version = hton32(kVersion);
+    h.requestId = hton32(requestId);
+    h.commandId = static_cast<uint8_t>(op);
+    h.timestamp = hton32(static_cast<uint32_t>(time(nullptr))); // Current timestamp
+    h.semantics = hton32(static_cast<uint32_t>(semantics));
+    h.payloadLen = hton32(static_cast<uint32_t>(payload.size()));
 
-    // Append payload bytes
+    appendBytes(buf, &h, sizeof(h));
     if (!payload.empty()) {
         appendBytes(buf, payload.data(), payload.size());
     }
@@ -101,29 +100,26 @@ bool parseReply(const std::vector<uint8_t>& buffer,
                 uint32_t& status,
                 std::string& message,
                 std::vector<uint8_t>& remainingPayload) {
+    if (buffer.size() < sizeof(MessageHeader)) return false;
     const uint8_t* p = buffer.data();
     size_t remaining = buffer.size();
 
-    // Need at least 7 uint32 fields in header
-    if (remaining < 28) return false;
+    MessageHeader h{};
+    std::memcpy(&h, p, sizeof(h));
+    p += sizeof(h);
+    remaining -= sizeof(h);
 
-    uint32_t magic = 0, version = 0, requestId = 0, opCode = 0, timestamp = 0, semantics = 0, payloadLen = 0;
-    if (!readUint32(p, remaining, magic)) return false;
-    if (!readUint32(p, remaining, version)) return false;
-    if (!readUint32(p, remaining, requestId)) return false;
-    if (!readUint32(p, remaining, opCode)) return false;
-    if (!readUint32(p, remaining, timestamp)) return false;
-    if (!readUint32(p, remaining, semantics)) return false;
-    if (!readUint32(p, remaining, payloadLen)) return false;
+    if (ntoh32(h.magic) != kMagic) return false;
+    // version check could be relaxed
+    (void)h;
 
-    if (magic != kMagic) return false;
-    if (version != kVersion) return false; // keep strict to catch mismatch
-    // Response is encoded with opCode == 0 per server implementation
-    if (opCode != 0) return false;
-    // Ensure payload length is sane
-    if (remaining < payloadLen) return false;
+    // Expect status + message string inside payload
+    if (remaining < 4) return false;
+    uint32_t payloadLenNetwork;
+    // We stored payloadLen in header in network order, but we already moved past header.
+    // To figure remaining payload for slicing, just use 'remaining'.
+    (void)payloadLenNetwork;
 
-    // Parse payload: status(uint32) + message(string) + optional remaining bytes
     if (!readUint32(p, remaining, status)) return false;
     if (!readString(p, remaining, message)) return false;
 

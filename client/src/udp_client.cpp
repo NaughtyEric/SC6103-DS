@@ -80,8 +80,7 @@ void UdpClient::cleanupWinsock() {
 
 bool UdpClient::sendRequestAwaitReply(const std::vector<uint8_t>& request,
                                       std::vector<uint8_t>& replyOut,
-                                      bool verboseLog,
-                                      bool dropFirstReplyOnce) {
+                                      bool verboseLog) {
     sockaddr_in server{};
     server.sin_family = AF_INET;
     InetPtonA(AF_INET, serverIp_.c_str(), &server.sin_addr);
@@ -91,7 +90,6 @@ bool UdpClient::sendRequestAwaitReply(const std::vector<uint8_t>& request,
     std::mt19937 gen(rd());
     std::uniform_real_distribution<double> dist(0.0, 1.0);
 
-    bool droppedOnce = false;
     for (uint32_t attempt = 0; attempt <= maxRetries_; ++attempt) {
         double r = dist(gen);
         if (r >= lossProbability_) {
@@ -114,15 +112,8 @@ bool UdpClient::sendRequestAwaitReply(const std::vector<uint8_t>& request,
                          reinterpret_cast<sockaddr*>(&from), &fromlen);
         if (n > 0) {
             buf.resize(static_cast<size_t>(n));
-            if (dropFirstReplyOnce && !droppedOnce) {
-                droppedOnce = true;
-                if (verboseLog) std::printf("[drop] simulated incoming loss for first reply\n");
-                // continue loop to retry receiving; do not resend immediately
-                // Let timeout path print message below; we immediately wait again
-            } else {
-                replyOut.swap(buf);
-                return true;
-            }
+            replyOut.swap(buf);
+            return true;
         }
         // else timeout or error, retry
         if (verboseLog) {

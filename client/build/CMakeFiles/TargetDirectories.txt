@@ -1,3 +1,0 @@
-C:/Users/simon/Desktop/DS_assignment/SC6103-DS/client/build/CMakeFiles/facility_client.dir
-C:/Users/simon/Desktop/DS_assignment/SC6103-DS/client/build/CMakeFiles/ALL_BUILD.dir
-C:/Users/simon/Desktop/DS_assignment/SC6103-DS/client/build/CMakeFiles/ZERO_CHECK.dir

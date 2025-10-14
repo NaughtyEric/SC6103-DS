@@ -138,9 +138,7 @@ public class AppointmentManager {
             try {
                 var appointment = _manager.appointments.get(appointmentId);
                 if (appointment == null) {
-                    // 预约不存在，但返回成功（幂等）
-                    Logger.getGlobal().info("Appointment " + appointmentId + " already cancelled or not found");
-                    result = true;
+                    Logger.getGlobal().warning("No such appointment: " + appointmentId);
                 } else if (!appointment.getClientInfo().equals(clientInfo)) {
                     Logger.getGlobal().warning("Client " + clientInfo + " trying to cancel appointment of " + appointment.getClientInfo());
                 } else {
@@ -168,31 +166,23 @@ public class AppointmentManager {
             Logger.getGlobal().info("Monitor expired for client " + clientInfo + " on facility " + facilityName);
         }
 
-        public int checkIn(int appointmentId) {
-            int result = 0; // 0 = success, 1 = already checked in, 2 = timeout, 3 = other errors
+        public boolean checkIn(int appointmentId) {
+            boolean result = false;
             rwLock.writeLock().lock();
             try {
                 var appointment = _manager.appointments.get(appointmentId);
                 if (appointment == null) {
                     Logger.getGlobal().warning("No such appointment: " + appointmentId);
-                    result = 3; // other errors
                 } else if (!appointment.getClientInfo().equals(clientInfo)) {
                     Logger.getGlobal().warning("Client " + clientInfo + " trying to check in appointment of " + appointment.getClientInfo());
-                    Logger.getGlobal().warning("ClientInfo equals check: " + appointment.getClientInfo().equals(clientInfo));
-                    Logger.getGlobal().warning("ClientInfo hashCode: " + appointment.getClientInfo().hashCode() + " vs " + clientInfo.hashCode());
-                    result = 3; // other errors
-                } else if (appointment.isCheckedIn()) {
-                    Logger.getGlobal().warning("Appointment " + appointmentId + " already checked in by " + clientInfo);
-                    result = 1; // already checked in
                 } else {
                     var now = Instant.now();
                     if (now.isBefore(appointment.getBeginTime()) || now.isAfter(appointment.getEndTime())) {
                         Logger.getGlobal().warning("Check-in time out of range for appointment " + appointmentId + " by " + clientInfo);
-                        result = 2; // timeout
                     } else {
                         appointment.checkIn(now);
                         Logger.getGlobal().info("Appointment " + appointmentId + " checked in by " + clientInfo);
-                        result = 0; // success
+                        result = true;
                     }
                 }
             } finally {
