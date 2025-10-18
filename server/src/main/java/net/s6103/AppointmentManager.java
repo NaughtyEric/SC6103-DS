@@ -2,9 +2,7 @@ package net.s6103;
 
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
+import java.time.*;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -179,7 +177,12 @@ public class AppointmentManager {
                 } else if (!appointment.getClientInfo().equals(clientInfo)) {
                     Logger.getGlobal().warning("Client " + clientInfo + " trying to check in appointment of " + appointment.getClientInfo());
                 } else {
-                    var now = Instant.now();
+                    ZoneId localZone = ZoneId.systemDefault(); // 比如 Asia/Singapore
+                    ZonedDateTime localNow = ZonedDateTime.now(localZone);
+                    LocalTime localTime = localNow.toLocalTime();
+                    LocalDate localDate = localNow.toLocalDate();
+                    ZonedDateTime utcSameClock = ZonedDateTime.of(localDate, localTime, ZoneOffset.UTC);
+                    var now = utcSameClock.toInstant();
                     if (now.isBefore(appointment.getBeginTime()) || now.isAfter(appointment.getEndTime())) {
                         Logger.getGlobal().warning("Check-in time out of range for appointment " + appointmentId + " by " + clientInfo);
                     } else {
