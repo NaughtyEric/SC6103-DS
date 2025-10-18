@@ -93,7 +93,7 @@ public class AppointmentManager {
                 Logger.getGlobal().info("Booking conflict for client " + clientInfo);
             } else {
                 Logger.getGlobal().info("Booking successful: " + id + " by " + clientInfo);
-                notifyClients(facilityName, start, end);
+                notifyClients(facilityName, start, end, "BOOK");
             }
             return id;
         }
@@ -125,7 +125,7 @@ public class AppointmentManager {
                         appointment.delay(offsetMinutes);
                         Logger.getGlobal().info("Appointment " + appointmentId + " changed by " + clientInfo);
                         result = true;
-                        notifyClients(appointment.getFacilityName(), newBeginTime, newEndTime);
+                        notifyClients(appointment.getFacilityName(), newBeginTime, newEndTime, "CHANGE");
                     } else {
                         Logger.getGlobal().info("Change conflict for appointment " + appointmentId + " by " + clientInfo);
                     }
@@ -149,7 +149,7 @@ public class AppointmentManager {
                     _manager.appointments.remove(appointmentId);
                     Logger.getGlobal().info("Appointment " + appointmentId + " cancelled by " + clientInfo);
                     result = true;
-                    notifyClients(appointment.getFacilityName(), appointment.getBeginTime(), appointment.getEndTime());
+                    notifyClients(appointment.getFacilityName(), appointment.getBeginTime(), appointment.getEndTime(), "CANCEL");
                 }
             } finally {
                 rwLock.writeLock().unlock();
@@ -205,7 +205,7 @@ public class AppointmentManager {
         }
     }
 
-    private void notifyClients(String facilityName, Instant beginTime, Instant endTime) {
+    private void notifyClients(String facilityName, Instant beginTime, Instant endTime, String operation) {
         Logger.getGlobal().info("Notifying facility " + facilityName + " from " + beginTime + " to " + endTime);
         for (var monitor : facilityMonitors.getOrDefault(facilityName, List.of())) {
             Logger.getGlobal().info("Checking monitor for client " + monitor.getClient());
@@ -219,7 +219,7 @@ public class AppointmentManager {
             try (DatagramSocket socket = new DatagramSocket()) {
                 InetAddress address = client.getIp();
                 int port = client.getPort();
-                String message = String.format("New appointment in %s from %s to %s",
+                String message = String.format("New operation %s in %s from %s to %s", operation,
                         facilityName, beginTime, endTime);
                 MessageSerializer.MessageHeader header = new MessageSerializer.MessageHeader(
                         0, null, MessageSerializer.Semantics.AT_LEAST_ONCE, message.length()
