@@ -219,11 +219,12 @@ public class AppointmentManager {
                 try (DatagramSocket socket = new DatagramSocket()) {
                     InetAddress address = client.getIp();
                     int port = client.getPort();
-                    MessageSerializer.MessageHeader header = new MessageSerializer.MessageHeader(
-                            0, MessageSerializer.OpCode.MONITOR, MessageSerializer.Semantics.AT_LEAST_ONCE, 0
-                    );
                     String message = String.format("New appointment in %s from %s to %s",
                             facilityName, beginTime, endTime);
+                    MessageSerializer.MessageHeader header = new MessageSerializer.MessageHeader(
+                            0, null, MessageSerializer.Semantics.AT_LEAST_ONCE, message.length()
+                    );
+
                     byte[] data = MessageSerializer.serializeResponse(
                             new MessageSerializer.ResponseMessage(header, 0, message, null)
                     );
