@@ -212,31 +212,29 @@ public class AppointmentManager {
             if (monitor.isExpired()) {
                 continue;
             }
-            if (beginTime.isBefore(monitor.getBeginInstant().plus(monitor.getMonitorInterval()))
-                    && endTime.isAfter(monitor.getBeginInstant())) {
-                Logger.getGlobal().info("Notifying client " + monitor.getClient() + " about new appointment in " + facilityName);
-                ClientInfo client = monitor.getClient();
-                try (DatagramSocket socket = new DatagramSocket()) {
-                    InetAddress address = client.getIp();
-                    int port = client.getPort();
-                    MessageSerializer.MessageHeader header = new MessageSerializer.MessageHeader(
-                            0, MessageSerializer.OpCode.MONITOR, MessageSerializer.Semantics.AT_LEAST_ONCE, 0
-                    );
-                    String message = String.format("New appointment in %s from %s to %s",
-                            facilityName, beginTime, endTime);
-                    byte[] data = MessageSerializer.serializeResponse(
-                            new MessageSerializer.ResponseMessage(header, 0, message, null)
-                    );
-                    var packet = new java.net.DatagramPacket(data, data.length, address, port);
-                    socket.send(packet);
+            // 监控逻辑：只要监控还在有效期内，就通知所有该设施的新预订
+            // 不需要检查时间重叠，因为监控的是"设施变化"而不是"特定时间段"
+            Logger.getGlobal().info("Notifying client " + monitor.getClient() + " about new appointment in " + facilityName);
+            ClientInfo client = monitor.getClient();
+            try (DatagramSocket socket = new DatagramSocket()) {
+                InetAddress address = client.getIp();
+                int port = client.getPort();
+                String message = String.format("New appointment in %s from %s to %s",
+                        facilityName, beginTime, endTime);
+                MessageSerializer.MessageHeader header = new MessageSerializer.MessageHeader(
+                        0, null, MessageSerializer.Semantics.AT_LEAST_ONCE, message.length()
+                );
 
-                    Logger.getGlobal().info("Monitor notification sent to " + client);
+                byte[] data = MessageSerializer.serializeResponse(
+                        new MessageSerializer.ResponseMessage(header, 0, message, null)
+                );
+                var packet = new java.net.DatagramPacket(data, data.length, address, port);
+                socket.send(packet);
 
-                } catch (Exception e) {
-                    Logger.getGlobal().warning("Failed to notify client " + client + ": " + e.getMessage());
-                }
-            } else {
-                Logger.getGlobal().info("No relevant appointment for client " + monitor.getClient() + ", the time period is from " + monitor.getBeginInstant() + " to " + monitor.getBeginInstant().plus(monitor.getMonitorInterval()));
+                Logger.getGlobal().info("Monitor notification sent to " + client);
+
+            } catch (Exception e) {
+                Logger.getGlobal().warning("Failed to notify client " + client + ": " + e.getMessage());
             }
         }
     }
