@@ -155,12 +155,13 @@ public class AppointmentManager {
             return result;
         }
 
-        public void monitor(String facilityName, Duration monitorInterval) {
+        public void monitor(int requestId, String facilityName, Duration monitorInterval) {
             if (!ValidFacilities.isValidFacility(facilityName)) {
                 Logger.getGlobal().warning("Invalid facility name: " + facilityName);
                 return;
             }
             var monitor = new Monitor(clientInfo, monitorInterval);
+            monitor.id = requestId;
             _manager.facilityMonitors
                     .computeIfAbsent(facilityName, _ -> new CopyOnWriteArrayList<>())
                     .add(monitor);
@@ -225,7 +226,7 @@ public class AppointmentManager {
                 String message = String.format("New operation %s in %s from %s to %s", operation,
                         facilityName, beginTime, endTime);
                 MessageSerializer.MessageHeader header = new MessageSerializer.MessageHeader(
-                        0, null, MessageSerializer.Semantics.AT_LEAST_ONCE, message.length()
+                        monitor.id, null, MessageSerializer.Semantics.AT_LEAST_ONCE, message.length()
                 );
 
                 byte[] data = MessageSerializer.serializeResponse(

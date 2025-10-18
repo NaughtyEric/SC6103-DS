@@ -9,6 +9,7 @@ public class Monitor {
     private final Instant beginInstant;
     private final Duration monitorInterval;
     private final ClientInfo client;
+    public int id;
 
     public Monitor(ClientInfo client, Duration monitorInterval) {
         // 简化：直接使用当前时间作为监控开始时间

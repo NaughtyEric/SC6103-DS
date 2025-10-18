@@ -172,7 +172,7 @@ public class BusinessLogicHandler {
         // 解析监控参数
         String facilityName = MessageSerializer.deserializeString(buffer);
         int durationSec = buffer.getInt();
-        buffer.getInt(); // 跳过clientPort，暂时不使用
+        int clientPort = buffer.getInt();
         
         // 验证设施名称
         if (!ValidFacilities.isValidFacility(facilityName)) {
@@ -183,10 +183,11 @@ public class BusinessLogicHandler {
         if (durationSec <= 0 || durationSec > 60 * 60 * 24 * 7) {
             return createErrorResponse(request.header.requestId, 3, "Invalid duration: " + durationSec);
         }
+        ClientInfo updatedClientInfo = new ClientInfo(clientInfo.getIp(), clientPort);
         
         // 开始监控
-        var handle = appointmentManager.getHandle(clientInfo);
-        handle.monitor(facilityName, Duration.ofSeconds(durationSec));
+        var handle = appointmentManager.getHandle(updatedClientInfo);
+        handle.monitor(request.header.requestId ,facilityName, Duration.ofSeconds(durationSec));
         
         return createSuccessResponse(request.header.requestId, "Monitoring started for " + durationSec + " seconds");
     }
